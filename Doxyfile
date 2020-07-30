@@ -883,7 +883,7 @@ FILE_PATTERNS          = *.c \
                          *.dox \
                          *.doc \
                          *.txt \
-                         *.py \
+                         *.py=py_filter \
                          *.pyw \
                          *.f90 \
                          *.f95 \
