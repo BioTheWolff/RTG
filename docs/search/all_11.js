@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['wronglyformedlinksdata_53',['WronglyFormedLinksData',['../classrth_1_1core_1_1errors_1_1_wrongly_formed_links_data.html',1,'rth::core::errors']]],
-  ['wronglyformedroutersdata_54',['WronglyFormedRoutersData',['../classrth_1_1core_1_1errors_1_1_wrongly_formed_routers_data.html',1,'rth::core::errors']]],
-  ['wronglyformedsubnetworksdata_55',['WronglyFormedSubnetworksData',['../classrth_1_1core_1_1errors_1_1_wrongly_formed_subnetworks_data.html',1,'rth::core::errors']]]
+  ['uid_5fto_5fname_56',['uid_to_name',['../classrth_1_1virtual__building_1_1network__creator_1_1_network_creator.html#a31f64f00ff2765c8ed7f27bd48118da9',1,'rth::virtual_building::network_creator::NetworkCreator']]],
+  ['unreachablenetwork_57',['UnreachableNetwork',['../classrth_1_1core_1_1errors_1_1_unreachable_network.html',1,'rth::core::errors']]]
 ];

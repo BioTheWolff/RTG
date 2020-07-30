@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['uid_5fto_5fname_51',['uid_to_name',['../classrth_1_1virtual__building_1_1network__creator_1_1_network_creator.html#a31f64f00ff2765c8ed7f27bd48118da9',1,'rth::virtual_building::network_creator::NetworkCreator']]],
-  ['unreachablenetwork_52',['UnreachableNetwork',['../classrth_1_1core_1_1errors_1_1_unreachable_network.html',1,'rth::core::errors']]]
+  ['try_5frouter_5fconnected_5fto_5fsubnet_55',['try_router_connected_to_subnet',['../classrth_1_1virtual__building_1_1routing__tables__generator_1_1_routing_tables_generator.html#a696f7aa6c258a9feb06e0840ba1a548c',1,'rth::virtual_building::routing_tables_generator::RoutingTablesGenerator']]]
 ];
