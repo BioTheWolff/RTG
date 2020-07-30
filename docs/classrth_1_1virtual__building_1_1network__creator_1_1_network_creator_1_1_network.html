@@ -76,6 +76,9 @@ $(function() {
 <div class="title">rth.virtual_building.network_creator.NetworkCreator.Network Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>The virtual subnetwork class.  
+ <a href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator_1_1_network.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -88,14 +91,13 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>connect</b> (self, rou
 <tr class="memitem:a791b0af4ee98fbed9e4c52ba5c833a3e"><td class="memItemLeft" align="right" valign="top"><a id="a791b0af4ee98fbed9e4c52ba5c833a3e"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>disconnect</b> (self, router_uid)</td></tr>
 <tr class="separator:a791b0af4ee98fbed9e4c52ba5c833a3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29b122b11f1106685202a99b5a445dc2"><td class="memItemLeft" align="right" valign="top"><a id="a29b122b11f1106685202a99b5a445dc2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, starting_ip, mask, uid, name=None)</td></tr>
+<tr class="memitem:a29b122b11f1106685202a99b5a445dc2"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator_1_1_network.html#a29b122b11f1106685202a99b5a445dc2">__init__</a> (self, starting_ip, mask, uid, name=None)</td></tr>
 <tr class="separator:a29b122b11f1106685202a99b5a445dc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a985371ac8cca61e218ed1d841d17879d"><td class="memItemLeft" align="right" valign="top"><a id="a985371ac8cca61e218ed1d841d17879d"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>connect</b> (self, router_uid, router_ip)</td></tr>
+<tr class="memitem:a985371ac8cca61e218ed1d841d17879d"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator_1_1_network.html#a985371ac8cca61e218ed1d841d17879d">connect</a> (self, router_uid, router_ip)</td></tr>
+<tr class="memdesc:a985371ac8cca61e218ed1d841d17879d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connects a router to the subnetwork.  <a href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator_1_1_network.html#a985371ac8cca61e218ed1d841d17879d">More...</a><br /></td></tr>
 <tr class="separator:a985371ac8cca61e218ed1d841d17879d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a791b0af4ee98fbed9e4c52ba5c833a3e"><td class="memItemLeft" align="right" valign="top"><a id="a791b0af4ee98fbed9e4c52ba5c833a3e"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>disconnect</b> (self, router_uid)</td></tr>
+<tr class="memitem:a791b0af4ee98fbed9e4c52ba5c833a3e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator_1_1_network.html#a791b0af4ee98fbed9e4c52ba5c833a3e">disconnect</a> (self, router_uid)</td></tr>
+<tr class="memdesc:a791b0af4ee98fbed9e4c52ba5c833a3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disconnects a router from the subnetwork.  <a href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator_1_1_network.html#a791b0af4ee98fbed9e4c52ba5c833a3e">More...</a><br /></td></tr>
 <tr class="separator:a791b0af4ee98fbed9e4c52ba5c833a3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -126,12 +128,150 @@ Static Public Attributes</h2></td></tr>
 <tr class="separator:a8899cfbab1e3e8fd2b554ff1ee3591eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><pre class="fragment">This class stands for the virtual network in the environment created for the calculus
+<div class="textblock"><p>The virtual subnetwork class. </p>
+<pre class="fragment">This class stands for the virtual network in the environment created for the calculus
 
 The class can stock informations about the routers connected to it.
 
 :ivar routers: The dict of the connected routers. Format: {router_uid: router_ip, ...}
-</pre> </div><hr/>The documentation for this class was generated from the following file:<ul>
+</pre><p>Used to create virtual subnetworks and link them with routers </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a29b122b11f1106685202a99b5a445dc2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29b122b11f1106685202a99b5a445dc2">&#9670;&nbsp;</a></span>__init__()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def rth.virtual_building.network_creator.NetworkCreator.Network.__init__ </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>starting_ip</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>mask</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>uid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>name</em> = <code>None</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">starting_ip</td><td>The IP for the new subnetwork </td></tr>
+    <tr><td class="paramname">mask</td><td>The network mask, either a literal or a length </td></tr>
+    <tr><td class="paramname">uid</td><td>The UID of the network </td></tr>
+    <tr><td class="paramname">name</td><td>The name of the new subnetwork. If None is provided, defaults to "&lt;Untitled Network#ID:{ID HERE}&gt;" </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a985371ac8cca61e218ed1d841d17879d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a985371ac8cca61e218ed1d841d17879d">&#9670;&nbsp;</a></span>connect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def rth.virtual_building.network_creator.NetworkCreator.Network.connect </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>router_uid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>router_ip</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Connects a router to the subnetwork. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">router_uid</td><td>The router UID </td></tr>
+    <tr><td class="paramname">router_ip</td><td>The IP assigned to the router on this subnetwork </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a791b0af4ee98fbed9e4c52ba5c833a3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a791b0af4ee98fbed9e4c52ba5c833a3e">&#9670;&nbsp;</a></span>disconnect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def rth.virtual_building.network_creator.NetworkCreator.Network.disconnect </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>router_uid</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Disconnects a router from the subnetwork. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">router_uid</td><td>The router UID </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>build/lib/rth/virtual_building/network_creator.py</li>
 </ul>
 </div><!-- contents -->

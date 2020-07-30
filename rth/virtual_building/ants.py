@@ -143,7 +143,7 @@ class AntsDiscovery:
         # given basics
         self.subnets = subnets
         self.routers = routers
-        self.equitemporality = equitemporality
+        self.equitemporality = True
         # made-up basics
         self.hops = {}
         self.links, self.subnets_table = self.prepare_matrix_and_links()

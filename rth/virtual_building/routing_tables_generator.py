@@ -11,7 +11,7 @@ class RoutingTablesGenerator:
         # given basics
         self.subnets = subnets
         self.routers = routers
-        self.equitemporality = equitemporality
+        self.equitemporality = True
         self.hops = hops
         self.links = links
         self.master_router = get_master_router(self.routers)

@@ -6,7 +6,7 @@ from nettools.utils.ip_class import FourBytesLiteral
 
 ## @package dispatcher
 #
-#  Package of the dispatcher class.
+#  Package of the Dispatcher class.
 #  This class aims to simplify the process to the user by regrouping all the functions in one class, executable in
 #  one and only simple way.
 

@@ -5,63 +5,54 @@ from nettools.utils.errors import IPOffNetworkRangeException
 
 from rth.core.errors import *
 
+## @package network_creator
+#
+#  This package contains the NetworkCreator class, that builds the virtual network from the provided data.
 
+
+## Builds a virtual network from the provided data
+#
+#  This class, based on the IPv4Network from the python package nettools, builds a virtual network of subnetworks and
+#  routers. It is the "virtual environment" that makes the base of the program.
+#
+# WARNING: Every link is supposed virtual, and is actually not an instance of any type. Links will be
+# considered and discovered by the Ants system.
+# Neither the Network or the Router class stock instances of "links", and only the master program
+# can process and understand these connections.
 class NetworkCreator:
-    """
-    This class is the virtual environment which contains everything for the program to run.
-
-    This is the base everything is built on.
-
-    The Network class is the virtual network existing in this environment.
-    The Router class is the virtual router existing in this environment.
-
-    WARNING: Every link is supposed virtual, and is actually not an instance of any type. Links will be
-        considered and discovered by the Ants system.
-        Neither the Network or the Router class stock instances of "links", and only the master program
-        can process and understand these connections.
-
-    :ivar subnetworks: Format: {uid => {"instance": instance, "range": network_range}, ...}
-    :ivar routers: Format: {uid => instance, ...}
-
-    :ivar subnets_names: Used solely for checking if the name already exists, so under list format.
-    :ivar routers_names: Used solely for checking if the name already exists, so under list format.
-
-    :ivar ranges: Networks ranges. Format: [{'start': start, 'end': end}, ...}
-    :ivar equitemporality: Boolean variable to set equitemporality to True or False. If set to false,
-        a post-calculus will be executed to choose the fastest route instead of the smallest one.
-    """
 
     subnetworks, routers = None, None
     subnets_names, routers_names = None, None
+
+    ## Subnetworks ranges ( format is [{"start": START, "end": END}, ...] )
     ranges = None
     equitemporality = None
 
-    #
-    # DUNDERS
-    #
+    ##
+    #  @param equitemporality Whether to activate equitemporality or not. Forced to True for now because equitemporality
+    #  is not yet implemented.
     def __init__(self, equitemporality=True):
-        self.equitemporality = equitemporality
+        self.equitemporality = True
 
         self.subnetworks, self.routers = {}, {}
         self.subnets_names, self.routers_names = [], []
         self.ranges = []
 
+    ## The virtual subnetwork class
     #
-    # CLASSES
-    #
+    #  Used to create virtual subnetworks and link them with routers
     class Network:
-        """
-        This class stands for the virtual network in the environment created for the calculus
-
-        The class can stock informations about the routers connected to it.
-
-        :ivar routers: The dict of the connected routers. Format: {router_uid: router_ip, ...}
-        """
 
         network_range, addresses, mask_length = {}, 0, 0
         routers = None
         uid, name = -1, None
 
+        ##
+        #  @param starting_ip The IP for the new subnetwork
+        #  @param mask The network mask, either a literal or a length
+        #  @param uid The UID of the network
+        #  @param name The name of the new subnetwork. If None is provided, defaults to
+        #  "<Untitled Network#ID:{ID HERE}>"
         def __init__(self, starting_ip, mask, uid, name=None):
 
             inst_ = IPv4Network().init_from_couple(starting_ip, mask)
@@ -76,26 +67,31 @@ class NetworkCreator:
             self.mask_length = inst_.mask_length
             self.addresses = inst_.addresses
 
+        ## Connects a router to the subnetwork
+        #  @param router_uid The router UID
+        #  @param router_ip The IP assigned to the router on this subnetwork
         def connect(self, router_uid, router_ip):
             self.routers[router_uid] = router_ip
 
+        ## Disconnects a router from the subnetwork
+        #  @param router_uid The router UID
         def disconnect(self, router_uid):
-            for i in range(len(self.routers)):
-                if self.routers[i]['uid'] == router_uid:
-                    del self.routers[i]
+            if router_uid in self.routers:
+                del self.routers[router_uid]
 
+    ## The virtual router class
+    #
+    #  Used to simulate routers and link them with subnetworks
     class Router:
-        """
-        This class is a virtual representation of a router, in the environment of calculus setup here
-
-        This class can stock informations on the subnets it is connected to.
-
-        :ivar connected_networks: The dict of the connected subnets. Format: {net_uid: router_ip, ...}
-        """
 
         uid, name = -1, None
         connected_networks, internet = None, False
 
+        ##
+        #  @param uid The UID of the router
+        #  @param internet Whether the router is connected to internet
+        #  @param name The name of the router. If None is provided, defaults to "<Untitled Network#ID:{ID HERE}>"
+        #  @param delay The delay of the router in ms. For now, not used because non-equitemporality is not implemented
         def __init__(self, uid, internet=False, name=None, delay=None):
             self.uid = uid
             self.name = name if name else None
@@ -106,20 +102,25 @@ class NetworkCreator:
                 self.delay = delay
             self.connected_networks = {}
 
+        ## Connects the router to a subnetwork
+        #  @param subnet_uid The UID of the subnetwork
+        #  @param router_ip The IP the router will be assigned
         def connect(self, subnet_uid, router_ip):
             if self.internet and self.connected_networks:
                 raise Exception('Master router cannot accept more than one connection')
 
             self.connected_networks[subnet_uid] = router_ip
 
+        ## Disconnects the router from a subnetwork
+        #  @param subnet_uid The UID of the subnetwork
         def disconnect(self, subnet_uid):
-            for i in range(len(self.connected_networks)):
-                if self.connected_networks[i]['uid'] == subnet_uid:
-                    del self.connected_networks[i]
+            if subnet_uid in self.connected_networks:
+                del self.connected_networks[subnet_uid]
 
-    #
-    # Getters
-    #
+    ## Returns IP of router on the subnetwork
+    #  If the given router is connected to the given subnetwork, returns its IP; else, returns None.
+    #  @param subnet_id The subnet UID
+    #  @param router_id The router UID
     def get_ip_of_router_on_subnetwork(self, subnet_id, router_id):
         if subnet_id not in self.subnetworks:
             return None
@@ -131,9 +132,9 @@ class NetworkCreator:
 
         return subnet.routers[router_id]
 
-    #
-    # Converters
-    #
+    ## Takes the name and returns the UID
+    #  @param cat The category (either "subnet" or "router")
+    #  @param name The name
     def name_to_uid(self, cat, name):
         list_ = self.subnets_names if cat == 'subnet' else self.routers_names
         id_ = 0
@@ -145,6 +146,9 @@ class NetworkCreator:
 
         return id_
 
+    ## Takes the UID and returns the name
+    #  @param cat The category (either "subnet" or "router")
+    #  @param uid The UID
     def uid_to_name(self, cat, uid):
         name_ = 0
 
@@ -161,28 +165,23 @@ class NetworkCreator:
 
         return str(name_)
 
-    #
-    # Testers
-    #
+    ## Returns if the given name exists
+    #  @param type_ The type (either "subnet" or "router")
+    #  @param name The name we want to check
     def is_name_existing(self, type_, name):
         list_ = self.subnets_names if type_ == 'subnet' else self.routers_names
         return name in list_
 
+    ## Returns if the given router has a connection to internet
+    #  @param router_uid The router UID
     def router_has_internet_connection(self, router_uid):
         return self.routers[router_uid].internet
 
-    #
-    # Creators
-    #
+    ## Creates a virtual subnetwork
+    #  @param ip The given IP
+    #  @param mask_length The network mask length of the subnetwork
+    #  @param name The eventual name of the subnetwork
     def create_network(self, ip, mask_length, name=None):
-        """
-        Function used to create a virtual network using Network class
-
-        :param ip:
-        :param mask_length:
-        :param name: The possible name of the network
-        :return uid: the uid of the newly created network
-        """
 
         uid = len(self.subnetworks)
 
@@ -243,14 +242,10 @@ class NetworkCreator:
 
         return uid
 
+    ## Creates a virtual router
+    #  @param internet_connection Whether the router has a connection to internet
+    #  @param name The eventual name of the router
     def create_router(self, internet_connection=False, name=None):
-        """
-        Function used to create a virtual Router by using its class
-
-        :param internet_connection: boolean for whether the router is a connexion to the outer world (internet)
-        :param name: The eventual name of the router
-        :return uid: The uid of the newly created router
-        """
 
         uid = len(self.routers)
 
@@ -269,29 +264,18 @@ class NetworkCreator:
 
         return uid
 
-    #
-    # Executers
-    #
+    ## Connects a router to a set of subnetworks
+    #  @param router_name The name of the router
+    #  @param subnets_ips The list of subnetworks with the corresponding IP to assign the router to. Format:
+    #  {SUBNET_NAME: IP, ...}
     def connect_router_to_networks(self, router_name, subnets_ips):
-        """
-        Connects router to given subnets
 
-        :param router_name: the name of the router, will be converted to its internal uid for processing
-        :param subnets_ips: the ip that will take the router for each network it is going to connect to
-            format: {network_name => new_router_ip, ...}
-        """
-
+        ## Checks if an IP is available
+        #  This function is a suicider: it will die if any of the tests fail. It will either raise
+        #  nettools.core.errors.IPOffNetworkRangeException or rth.core.errors.IPAlreadyAttributed
+        #  @param subnet_inst_ The subnetwork instance
+        #  @param ip_ The IP that has to be checked
         def check_ip_availability(subnet_inst_, ip_):
-            """
-            This function is a suicider: it will die if any of the tests fail
-
-            :param subnet_inst_: the subnet instance
-            :param ip_: the ip that has to be checked
-            :raise:
-                NetworkUtilities.core.errors.IPOffNetworkRangeException
-                or
-                rth.core.errors.IPAlreadyAttributed
-            """
 
             # Checking that ip is effectively in range of the subnet
             if isinstance(ip_, str):
@@ -341,9 +325,7 @@ class NetworkCreator:
             self.subnetworks[subnet_uid]['instance'] = subnet_inst
             self.routers[router_uid] = router_inst
 
-    #
-    # Displayers
-    #
+    ## Displays the virtual local network in the console
     def display_network(self):
         for i in self.subnetworks:
             inst = self.subnetworks[i]['instance']
@@ -355,6 +337,7 @@ class NetworkCreator:
                 "\n"
             )
 
+    ## Returns a raw output of the local network
     def network_raw_output(self):
         final = {'subnets': {}, 'routers': {}}
 
