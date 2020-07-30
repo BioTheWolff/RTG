@@ -83,7 +83,7 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab0e246d8f558eb7fc0903f8ae3e3948b"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#ab0e246d8f558eb7fc0903f8ae3e3948b">__init__</a> (self, debug=False)</td></tr>
-<tr class="memdesc:ab0e246d8f558eb7fc0903f8ae3e3948b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The constructor.  <a href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#ab0e246d8f558eb7fc0903f8ae3e3948b">More...</a><br /></td></tr>
+<tr class="memdesc:ab0e246d8f558eb7fc0903f8ae3e3948b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The init function.  <a href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#ab0e246d8f558eb7fc0903f8ae3e3948b">More...</a><br /></td></tr>
 <tr class="separator:ab0e246d8f558eb7fc0903f8ae3e3948b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae69159b85d82d50615227a79a578aca8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#ae69159b85d82d50615227a79a578aca8">execute</a> (self, subnetworks, routers, links, equitemporality=True)</td></tr>
 <tr class="memdesc:ae69159b85d82d50615227a79a578aca8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that triggers everything.  <a href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#ae69159b85d82d50615227a79a578aca8">More...</a><br /></td></tr>
@@ -93,10 +93,10 @@ def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <tr class="memdesc:abe92d221c54bf030bacaecc2c56a72e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outputs the raw network. <br /></td></tr>
 <tr class="separator:abe92d221c54bf030bacaecc2c56a72e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa499213670a8818a067c1ab8559d36e1"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#aa499213670a8818a067c1ab8559d36e1">display_routing_tables</a> (self)</td></tr>
-<tr class="memdesc:aa499213670a8818a067c1ab8559d36e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays in the console Displays the formatted paths and routing tables in the console.  <a href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#aa499213670a8818a067c1ab8559d36e1">More...</a><br /></td></tr>
+<tr class="memdesc:aa499213670a8818a067c1ab8559d36e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays in the console.  <a href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#aa499213670a8818a067c1ab8559d36e1">More...</a><br /></td></tr>
 <tr class="separator:aa499213670a8818a067c1ab8559d36e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6652ac1a5bdb16c797af93ed48918e87"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#a6652ac1a5bdb16c797af93ed48918e87">output_routing_tables</a> (self, file_path)</td></tr>
-<tr class="memdesc:a6652ac1a5bdb16c797af93ed48918e87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outputs to a file Outputs the formatted paths and routing tables to a given file path.  <a href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#a6652ac1a5bdb16c797af93ed48918e87">More...</a><br /></td></tr>
+<tr class="memdesc:a6652ac1a5bdb16c797af93ed48918e87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outputs to a file.  <a href="classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#a6652ac1a5bdb16c797af93ed48918e87">More...</a><br /></td></tr>
 <tr class="separator:a6652ac1a5bdb16c797af93ed48918e87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -169,10 +169,10 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The constructor. </p>
+<p>The init function. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">debug</td><td>The debug param that triggers all debug prints in the other classes </td></tr>
+    <tr><td class="paramname">debug</td><td>Triggers the whole debug system if set to True </td></tr>
   </table>
   </dd>
 </dl>
@@ -196,9 +196,9 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Displays in the console Displays the formatted paths and routing tables in the console. </p>
-<p>Useful for interactive consoles. </p>
-
+<p>Displays in the console. </p>
+<pre class="fragment">   Displays the formatted paths and routing tables in the console. Useful for interactive consoles.
+</pre> 
 </div>
 </div>
 <a id="ae69159b85d82d50615227a79a578aca8"></a>
@@ -284,8 +284,9 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Outputs to a file Outputs the formatted paths and routing tables to a given file path. </p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Outputs to a file. </p>
+<pre class="fragment">   Outputs the formatted paths and routing tables to a given file path.
+</pre><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">file_path</td><td>The file path where all the data will be outputted. Preferably a .txt file. </td></tr>
   </table>

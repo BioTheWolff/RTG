@@ -92,9 +92,10 @@ Classes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad52ec33291b9cc3a88459f6afced3c2e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator.html#ad52ec33291b9cc3a88459f6afced3c2e">__init__</a> (self, equitemporality=True)</td></tr>
+<tr class="memdesc:ad52ec33291b9cc3a88459f6afced3c2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Init.  <a href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator.html#ad52ec33291b9cc3a88459f6afced3c2e">More...</a><br /></td></tr>
 <tr class="separator:ad52ec33291b9cc3a88459f6afced3c2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5eef860ccc2ed24f64c62209216fe8a7"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator.html#a5eef860ccc2ed24f64c62209216fe8a7">get_ip_of_router_on_subnetwork</a> (self, subnet_id, router_id)</td></tr>
-<tr class="memdesc:a5eef860ccc2ed24f64c62209216fe8a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns IP of router on the subnetwork If the given router is connected to the given subnetwork, returns its IP; else, returns None.  <a href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator.html#a5eef860ccc2ed24f64c62209216fe8a7">More...</a><br /></td></tr>
+<tr class="memdesc:a5eef860ccc2ed24f64c62209216fe8a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns IP of router on the subnetwork.  <a href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator.html#a5eef860ccc2ed24f64c62209216fe8a7">More...</a><br /></td></tr>
 <tr class="separator:a5eef860ccc2ed24f64c62209216fe8a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14e4b866c2ce3f6bfe5ca204172782c8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator.html#a14e4b866c2ce3f6bfe5ca204172782c8">name_to_uid</a> (self, cat, name)</td></tr>
 <tr class="memdesc:a14e4b866c2ce3f6bfe5ca204172782c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes the name and returns the UID.  <a href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator.html#a14e4b866c2ce3f6bfe5ca204172782c8">More...</a><br /></td></tr>
@@ -151,7 +152,7 @@ Static Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Builds a virtual network from the provided data. </p>
 <p>This class, based on the IPv4Network from the python package nettools, builds a virtual network of subnetworks and routers. It is the "virtual environment" that makes the base of the program.</p>
-<p>WARNING: Every link is supposed virtual, and is actually not an instance of any type. Links will be considered and discovered by the Ants system. Neither the <a class="el" href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator_1_1_network.html" title="The virtual subnetwork class.">Network</a> or the <a class="el" href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator_1_1_router.html" title="The virtual router class.">Router</a> class stock instances of "links", and only the master program can process and understand these connections. </p>
+<dl class="section warning"><dt>Warning</dt><dd>Every link is supposed virtual, and is actually not an instance of any type. Links will be considered and discovered by the Ants system. Neither the <a class="el" href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator_1_1_network.html" title="The virtual subnetwork class.">Network</a> or the <a class="el" href="classrth_1_1virtual__building_1_1network__creator_1_1_network_creator_1_1_router.html" title="The virtual router class.">Router</a> class stock instances of "links", and only the master program can process and understand these connections. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad52ec33291b9cc3a88459f6afced3c2e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad52ec33291b9cc3a88459f6afced3c2e">&#9670;&nbsp;</a></span>__init__()</h2>
@@ -178,9 +179,11 @@ Static Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Init. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">equitemporality</td><td>Whether to activate equitemporality or not. Forced to True for now because equitemporality is not yet implemented. </td></tr>
+    <tr><td class="paramname">equitemporality</td><td>equitemporality Whether to activate equitemporality or not. Forced to True for now because equitemporality is not yet implemented. </td></tr>
   </table>
   </dd>
 </dl>
@@ -224,7 +227,7 @@ Static Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">router_name</td><td>The name of the router </td></tr>
-    <tr><td class="paramname">subnets_ips</td><td>The list of subnetworks with the corresponding IP to assign the router to. Format: {SUBNET_NAME: IP, ...} </td></tr>
+    <tr><td class="paramname">subnets_ips</td><td>The list of subnetworks with the corresponding IP to assign the router to. Format is {SUBNET_NAME: IP, ...} </td></tr>
   </table>
   </dd>
 </dl>
@@ -356,14 +359,15 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Returns IP of router on the subnetwork If the given router is connected to the given subnetwork, returns its IP; else, returns None. </p>
+<p>Returns IP of router on the subnetwork. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">subnet_id</td><td>The subnet UID </td></tr>
-    <tr><td class="paramname">router_id</td><td>The router UID </td></tr>
+    <tr><td class="paramname">router_id</td><td>The router UID</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>If the given router is connected to the given subnetwork, returns its IP; else, returns None. </dd></dl>
 
 </div>
 </div>
@@ -403,10 +407,11 @@ Static Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">type_</td><td>The type (either "subnet" or "router") </td></tr>
-    <tr><td class="paramname">name</td><td>The name we want to check </td></tr>
+    <tr><td class="paramname">name</td><td>The name we want to check</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Boolean of whether the name exists in the given type </dd></dl>
 
 </div>
 </div>
@@ -482,10 +487,11 @@ Static Public Attributes</h2></td></tr>
 <p>Returns if the given router has a connection to internet. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">router_uid</td><td>The router UID </td></tr>
+    <tr><td class="paramname">router_uid</td><td>The router UID</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the router has internet </dd></dl>
 
 </div>
 </div>
@@ -525,10 +531,11 @@ Static Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cat</td><td>The category (either "subnet" or "router") </td></tr>
-    <tr><td class="paramname">uid</td><td>The UID </td></tr>
+    <tr><td class="paramname">uid</td><td>The UID</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The name of the given UID if it exists, else None </dd></dl>
 
 </div>
 </div>
