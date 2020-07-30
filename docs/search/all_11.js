@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['yamladapter_46',['YAMLAdapter',['../classstock_1_1yml__adapter_1_1_y_a_m_l_adapter.html',1,'stock::yml_adapter']]]
+  ['wronglyformedlinksdata_53',['WronglyFormedLinksData',['../classrth_1_1core_1_1errors_1_1_wrongly_formed_links_data.html',1,'rth::core::errors']]],
+  ['wronglyformedroutersdata_54',['WronglyFormedRoutersData',['../classrth_1_1core_1_1errors_1_1_wrongly_formed_routers_data.html',1,'rth::core::errors']]],
+  ['wronglyformedsubnetworksdata_55',['WronglyFormedSubnetworksData',['../classrth_1_1core_1_1errors_1_1_wrongly_formed_subnetworks_data.html',1,'rth::core::errors']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['output_5frouting_5ftables_86',['output_routing_tables',['../classrth_1_1core_1_1dispatcher_1_1_dispatcher.html#a6652ac1a5bdb16c797af93ed48918e87',1,'rth::core::dispatcher::Dispatcher']]]
+  ['kill_99',['kill',['../classrth_1_1virtual__building_1_1ants_1_1_ant.html#a319bfe8ea2314a6b4a0a16a92c41bc18',1,'rth::virtual_building::ants::Ant']]]
 ];

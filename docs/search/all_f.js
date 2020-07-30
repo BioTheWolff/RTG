@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['uid_5fto_5fname_42',['uid_to_name',['../classrth_1_1virtual__building_1_1network__creator_1_1_network_creator.html#a31f64f00ff2765c8ed7f27bd48118da9',1,'rth::virtual_building::network_creator::NetworkCreator']]],
-  ['unreachablenetwork_43',['UnreachableNetwork',['../classrth_1_1core_1_1errors_1_1_unreachable_network.html',1,'rth::core::errors']]]
+  ['sweep_5fnetwork_49',['sweep_network',['../classrth_1_1virtual__building_1_1ants_1_1_ants_discovery.html#a351c415a4eed62ae16bead6b781b2f91',1,'rth.virtual_building.ants.AntsDiscovery.sweep_network(self)'],['../classrth_1_1virtual__building_1_1ants_1_1_ants_discovery.html#a351c415a4eed62ae16bead6b781b2f91',1,'rth.virtual_building.ants.AntsDiscovery.sweep_network(self)']]],
+  ['sweepant_50',['SweepAnt',['../classrth_1_1virtual__building_1_1ants_1_1_sweep_ant.html',1,'rth::virtual_building::ants']]]
 ];
