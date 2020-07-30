@@ -6,27 +6,27 @@ from rth.virtual_building.utils import *
 #  The package that contains all the Ants process, including Sweep and Discovery.
 
 
-## An Enum of the possible states of an Ant
 class AntState(Enum):
+    """
+    An Enum of the possible states of an Ant
+    """
+
     Alive = 0
     Dead = 1
     Waiting = 2
 
 
-## The main Ant class, little thing that allows us to "probe a network"
-#
-#  Basically, this class, used with the right system (in AntsDiscovery) allows to create readable and understandable
-#  data from a mess of figures and strings.
 class Ant:
     """
-    The main Ant class.
+    The main Ant class, little thing that allows us to build virtual paths in a virtual environment
+
     This class is used for a blind discovery through the virtual network we created, to see links between subnets and
     routers.
 
     Below,
-        - Iteration is the move to the next router or subnet,
-        - Explored is the fact a router or network has already been "visited" by an ant.
-        - Possibility is an existing subnet or router that has already been explored or not.
+        - "Iteration" is the move to the next router or subnet,
+        - "Explored" is the fact a router or network has already been "visited" by an ant.
+        - "Possibility" is an existing subnet or router that has already been explored or not.
     There are three cases each Iteration:
         - One Possibility, not Explored: the ant moves to the possibility and explores it, storing data into its history
         - One or several Possibilities, all Explored: the ant dies and leaves no children.
@@ -35,10 +35,15 @@ class Ant:
             "spawn" on the possibility the mother could not explore; Children may then continue exploring normally.
     """
 
-    ##
-    #  @param state The AntState state of the ant.
-    #  @param pos A dictionary of the current position of the ant.
     def __init__(self, state: AntState, pos: dict):
+        """
+        Init the Ant
+
+        Args:
+            state: The AntState state of the ant.
+            pos: A dictionary of the current position of the ant.
+        """
+
         self.__state = state
         self.__pos = pos
         # { "subnets": [], "routers": [] }
@@ -46,51 +51,91 @@ class Ant:
 
     @property
     def router(self):
+        """
+        Returns:
+            The current router of the Ant.
+        """
         return self.__pos["router"]
 
     @property
     def subnet(self):
+        """
+        Returns:
+            The current router of the Ant.
+        """
         return self.__pos["subnet"]
 
     @property
     def dead(self):
+        """
+        Returns:
+            True if the Ant is Dead, else False
+        """
         return self.__state == AntState.Dead
 
     @property
     def alive(self):
+        """
+        Returns:
+            True if the Ant is Alive, else False
+        """
         return self.__state == AntState.Alive
 
     @property
     def waiting(self):
+        """
+        Returns:
+            True if the Ant is Waiting, else False
+        """
         return self.__state == AntState.Waiting
 
     @property
     def state(self):
+        """
+        Returns:
+            The current state of the Ant.
+        """
         return self.__state
 
-    ## Kill the ant
     def kill(self):
+        """
+        Kill the ant.
+
+        Sets the ant state to Dead.
+        """
         self.__state = AntState.Dead
 
     ## Activate (make alive) the ant
     def activate(self):
         self.__state = AntState.Alive
 
-    ## Moves the ant to the given position
-    #  @param pos The position
     def move_to(self, pos):
+        """
+        Moves the ant to the given position
+
+        Args:
+            pos: The position
+        """
+
         hop_type = self.next_hop_type()
         self.__pos[hop_type] = pos
         self._history[f"{hop_type}s"].append(self.__pos[hop_type])
 
-    ## Get the path the ant has taken
     def get_history(self):
+        """
+        Get the path the ant has taken
+        """
         return self._history
 
-    ## Feed the ant's history
-    #  @param type_at The type the ant is at, either "routers" or "subnets"
-    #  @param hist The history to feed
     def feed_history(self, type_at, hist):
+        """
+        Feed the ant's history
+
+        Args:
+            type_at: The type the ant is at, either "routers" or "subnets"
+            hist: The history to feed
+        """
+
         if type_at == "routers":
             self._history["routers"][0:0] = hist["routers"][:-1]
             self._history["subnets"][0:0] = hist["subnets"]
@@ -98,8 +143,17 @@ class Ant:
             self._history["routers"][0:0] = hist["routers"]
             self._history["subnets"][0:0] = hist["subnets"][:-1]
 
-    ## Returns what the next hop of the ant will be
     def next_hop_type(self):
+        """
+        Determines what the next hop of the ant will be
+
+        Returns:
+            Either 'router' or 'subnet'
+
+        Raises:
+            Exception: if there is more routers seen than subnetworks (this Exception should NEVER be thrown)
+        """
+
         sub = self._history['subnets']
         rout = self._history['routers']
 
@@ -113,38 +167,70 @@ class Ant:
             raise Exception("FindAnt history: Router length seems to be greater than subnets length; impossible")
 
 
-## Ant that sweeps the network to verify all subnetworks are reachable
-#
-#  The sweep always starts from the subnetwork attached to the master router
 class SweepAnt(Ant):
+    """
+    Ant that sweeps the network to verify all subnetworks are reachable
+
+    The sweep always starts from the subnetwork attached to the master router
+    """
 
     def __init__(self, state: AntState, pos: dict):
         super().__init__(state, pos)
 
-    ## Check if the next move could be possible
     def check_next_move(self, next_):
+        """
+        Check if the next move could be possible
+
+        Args:
+            next_: The UID of the next hop
+
+        Returns:
+
+        """
         hop_type = self.next_hop_type()
 
         return next_ not in self._history[f"{hop_type}s"]
 
 
-## Ant that finds a path between two given subnetworks
 class FindAnt(Ant):
+    """
+    Ant that finds a path between two given subnetworks
+    """
 
-    ##
-    #  @param objective The UID of the subnetwork we want to reach
     def __init__(self, state: AntState, pos: dict, objective):
+        """
+        Init
+
+        Args:
+            state: The AntState of the Ant
+            pos: The starting position
+            objective: The UID of the objective subnetwork
+        """
+
         super().__init__(state, pos)
         self.__objective = objective
 
-    ## Whether the ant is on the objective
     def already_on_objective(self):
+        """
+        Returns:
+            Whether the ant is on the objective
+        """
         return self.subnet == self.__objective
 
-    ## Checks next move type
-    #  Can return three different things, depending on if the path is a dead end, there are subnetworks left to explore
-    #  here or we found the objective.
     def check_next_move(self, next_):
+        """
+        Checks next move type
+
+        Can return three different things, depending on if the path is a dead end, there are subnetworks left to explore
+        here or we found the objective.
+
+        Args:
+            next_: The UID of the next hop
+
+        Returns:
+            A tuple that can be either [True, True], [True, False] or [False, False] depending on the environment
+        """
+
         hop_type = self.next_hop_type()
 
         if next_ not in self._history[f"{hop_type}s"]:
@@ -157,13 +243,22 @@ class FindAnt(Ant):
             return [False, False]
 
 
-## The class that runs all the process of Discovery
 class AntsDiscovery:
+    """
+    The class that runs all the process of Discovery
+    """
 
-    ##
-    #  @param subnets The subnetworks data
-    #  @param routers The routers data
     def __init__(self, subnets, routers, equitemporality=True, debug=False):
+        """
+        Init
+
+        Args:
+            subnets: The subnetworks data
+            routers: The routers data
+            equitemporality: The equitemporality tweaker
+            debug: Debug param
+        """
+
         # given basics
         self.subnets = subnets
         self.routers = routers
@@ -174,10 +269,16 @@ class AntsDiscovery:
         self.master_router = get_master_router(self.routers)
         self.debug = debug
 
-    ## Prepares the matrix and the links
-    #  The matrix is made of tuples (s,e) with S being the UID of the starting subnetwork, and E the UID of the
-    #  subnetwork to find.
     def prepare_matrix_and_links(self):
+        """
+        Prepares the matrix and the links
+
+        The matrix is made of tuples (s,e) with S being the UID of the starting subnetwork, and E the UID of the
+        subnetwork to find.
+
+        Returns:
+            The prepared matrix and links
+        """
 
         # links
         links = {'subnets': {}, 'routers': {}}
@@ -199,12 +300,6 @@ class AntsDiscovery:
 
         return links, matrix
 
-    ##
-    #  @param discovery_type Whether it is a sweep or a search.
-    #  @param links The links prepared in the prepare_matrix_and_links function
-    #  @param subnet_start The UID of the starting subnetwork
-    #  @param subnet_end The UID of the objective (if we are searching for one, and not sweeping)
-    #  @param debug The debug param, which you set to True to output a huge load of things processed
     @staticmethod
     def ants_discovery_process(discovery_type, links, subnet_start, subnet_end=None, debug=False):
         """
@@ -223,6 +318,16 @@ class AntsDiscovery:
             3. "Cleaning up dead bodies": we delete the dead ants from the ants list
 
         RESULT: we then return what has to be returned
+        
+        Args:
+            discovery_type: Whether it is a sweep or a search.
+            links: The links prepared in the prepare_matrix_and_links function
+            subnet_start: The UID of the starting subnetwork
+            subnet_end: The UID of the objective (if we are searching for one, and not sweeping)
+            debug: The debug param, which you set to True to output a huge load of things processed
+
+        Returns:
+            The visited subnetworks and routers, and the paths leading to the objective
         """
 
         visited = {"subnets": [], "routers": []}
@@ -451,9 +556,10 @@ class AntsDiscovery:
 
         return visited, ants_at_objective
 
-    ## Sweeps the network
     def sweep_network(self):
         """
+        Sweeps the network
+
         We sweep the network from the master router and try to reach every subnetwork.
         This function is a suicider, as to say it will die by raising an error if any subnet is unreachable; else the
         program will continue
@@ -470,9 +576,10 @@ class AntsDiscovery:
                 total = len(self.subnets) - len(result['subnets'])
                 raise UnreachableNetwork(inst.name, inst.cidr, total)
 
-    ## Calculates the hops (path) for each tuple of the matrix
     def calculate_hops(self):
         """
+        Calculates the hops (path) for each tuple of the matrix
+
         We calculate the hops for each matrix entry, and either keep the smallest one if there is
         equitemporality, or store each hop for further analysis and calculus by another function
         """
