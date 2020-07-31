@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.18"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Routing Tables Helper: Main Page</title>
+<title>Routing Tables Helper: Routing Tables Helper</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -62,11 +62,157 @@ $(function() {
 </iframe>
 </div>
 
-<div class="header">
+<div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">Routing Tables Helper Documentation</div>  </div>
+<div class="title">Routing Tables Helper </div>  </div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p><a class="anchor" id="md_README"></a> A program made by a lover of new technologies, for all networking developers, sysadmins and other people that might find any use to it. It aims to ease the creation and calculus of routing tables when working on networks.</p>
+<h1><a class="anchor" id="autotoc_md1"></a>
+Is it finished yet?</h1>
+<p>No, the program is only in its first stable release. I'm always hoping to create and innovate more; maybe it won't be updated for a moment, but it doesn't mean I let it down either.</p>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Contact info</h2>
+<ul>
+<li>By mail: biothewolff [at] gmx [dot] fr</li>
+<li>On Discord: BioTheWolff#7708</li>
+<li>You can also find me on these two french Discord servers:<ul>
+<li><a href="https://discord.gg/8d4ACG5">Developpeur(euse)s FR</a></li>
+<li><a href="https://discord.gg/awbUQe4">l4p1n-srv</a></li>
+</ul>
+</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md3"></a>
+What is it?</h1>
+<p>The Routing Tables Helper, or RTH, is a program that aims to provide an easy, and quick, way to create routing tables. Instead of having to create them by hand, using a Virtual Machine (VM) or your own network, and a piece of paper, this virtual network builder and routing tables generator does it all for you.</p>
+<p>The RTH is based on, and uses, another of my programs, <a href="https://github.com/BioTheWolff/NetTools">nettools</a>, a tool for fast networks and IPs handling and calculus.</p>
+<h1><a class="anchor" id="autotoc_md4"></a>
+Documentation</h1>
+<h2><a class="anchor" id="autotoc_md5"></a>
+Classes</h2>
+<p>The main class you'll want to use is the Dispatcher class. You can import it from <code>rth.core.dispatcher</code></p>
+<p>The other classes, that each do one part of the work, are the <code>NetworkCreator</code>, <code>Ants</code> and <code>RoutingTablesGenerator</code> classes. Normally, you won't use them on their own, unless you are willing to do a special action.</p>
+<h2><a class="anchor" id="autotoc_md6"></a>
+How to use the software</h2>
+<p>The biggest problem here is how to format the data the right way. To generate the routing tables, we will need three things: the subnetworks, the routers and the links. As the computer is no sentient machine, it needs the links to virtually reconstruct the network and find paths in all this mess of figures and names.</p>
+<h3><a class="anchor" id="autotoc_md7"></a>
+General flow and usage of the program</h3>
+<p>This is the easiest and fastest part to read and understand. You just need to import the Dispatcher, create an instance, <code>execute()</code> it the right way and it's all done!</p>
+<div class="fragment"><div class="line">from rth.core.dispatcher import Dispatcher</div>
+<div class="line"> </div>
+<div class="line">inst = Dispatcher()</div>
+<div class="line">inst.execute(subnetworks, routers, links)</div>
+<div class="line"># And it&#39;s all done !</div>
+<div class="line"> </div>
+<div class="line"># You can then display the output in the console</div>
+<div class="line">inst.display_routing_tables()</div>
+<div class="line"> </div>
+<div class="line"># or output it to a file (txt will be the best format for now)</div>
+<div class="line">inst.output_routing_tables(&quot;D:/Projects/output.txt&quot;)</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md8"></a>
+Subnetworks data</h3>
+<p>The subnetworks data is a dictionary you must provide under this format: <code>{NAME: CIDR, ...}</code> meaning putting the names of the subnetworks as keys, and their respectives CIDRs in values.</p>
+<p>Example: </p><div class="fragment"><div class="line">subnetworks = {</div>
+<div class="line">    &#39;A&#39;: &quot;10.0.1.0/24&quot;,</div>
+<div class="line">    &#39;B&#39;: &quot;10.0.2.0/24&quot;,</div>
+<div class="line">    &#39;C&#39;: &quot;10.0.3.0/24&quot;</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>NB: if you wish to not give any name to a subnetwork, leave the key as an empty string (&lsquo;&rsquo;'<code>) and it will automatically be named</code>&lt;Untitled Network::ID:{ID HERE}&gt;<code>(with</code>{ID HERE}` being the unique ID of the network)</p>
+<h3><a class="anchor" id="autotoc_md9"></a>
+Routers data</h3>
+<p>The routers data is also a dictionary, which resembles the subnetworks data. The only difference is the value you must give; the format is <code>{NAME: HAS_INTERNET_CONNECTION, ...}</code>. The <code>HAS_INTERNET_CONNECTION</code> value <b>must be either True or None</b>. <code>True</code> means the router is connected to internet, and <code>None</code> means it doesn't.</p>
+<p>Example: </p><div class="fragment"><div class="line">routers = {</div>
+<div class="line">    0: True,</div>
+<div class="line">    1: None,</div>
+<div class="line">    2: None,</div>
+<div class="line">    3: None</div>
+<div class="line">}</div>
+</div><!-- fragment --><p><b>WARNING:</b> In this current version, only <b>ONE</b> router should have the internet connection. It will throw an exception if more or less than one are set with an internet connection.</p>
+<p>The router with the internet connection will be called "master router" below.</p>
+<h3><a class="anchor" id="autotoc_md10"></a>
+Links data</h3>
+<p>The links data is the most important, and also the trickiest to format. The format is <code>{ROUTER_NAME: {SUBNETWORK_NAME: IP, ...}, ...}</code>. So, to explain it more literally, you must make a dictionary of the connected subnetworks, and the IP at which the router is connected onto the subnetwork, for each router.</p>
+<p>The <code>IP</code> value can be either an IPv4, or <code>None</code>. If <code>None</code> is given, the program will automatically assign an IP for the router, which will be the first available address starting from the END of the subnetwork range.</p>
+<p>Example: </p><div class="fragment"><div class="line">links = {</div>
+<div class="line">    0: {</div>
+<div class="line">        &quot;A&quot;: &quot;10.0.1.200&quot;</div>
+<div class="line">    },</div>
+<div class="line">    1: {</div>
+<div class="line">        &quot;A&quot;: None,</div>
+<div class="line">        &quot;C&quot;: &quot;10.0.3.254&quot;</div>
+<div class="line">    },</div>
+<div class="line">    2: {</div>
+<div class="line">        &quot;A&quot;: &quot;10.0.1.253&quot;,</div>
+<div class="line">        &quot;B&quot;: &quot;10.0.2.253&quot;</div>
+<div class="line">    },</div>
+<div class="line">    3: {</div>
+<div class="line">        &quot;B&quot;: &quot;10.0.2.252&quot;,</div>
+<div class="line">        &quot;C&quot;: None</div>
+<div class="line">    }</div>
+<div class="line">}</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md11"></a>
+Now to combine it all into an example</h3>
+<div class="fragment"><div class="line">from rth.core.dispatcher import Dispatcher</div>
+<div class="line"> </div>
+<div class="line">subnetworks = {</div>
+<div class="line">    &#39;A&#39;: &quot;10.0.1.0/24&quot;,</div>
+<div class="line">    &#39;B&#39;: &quot;10.0.2.0/24&quot;,</div>
+<div class="line">    &#39;C&#39;: &quot;10.0.3.0/24&quot;</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line">routers = {</div>
+<div class="line">    0: True,</div>
+<div class="line">    1: None,</div>
+<div class="line">    2: None,</div>
+<div class="line">    3: None</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line">links = {</div>
+<div class="line">    0: {</div>
+<div class="line">        &quot;A&quot;: &quot;10.0.1.200&quot;</div>
+<div class="line">    },</div>
+<div class="line">    1: {</div>
+<div class="line">        &quot;A&quot;: None,</div>
+<div class="line">        &quot;C&quot;: &quot;10.0.3.254&quot;</div>
+<div class="line">    },</div>
+<div class="line">    2: {</div>
+<div class="line">        &quot;A&quot;: &quot;10.0.1.253&quot;,</div>
+<div class="line">        &quot;B&quot;: &quot;10.0.2.253&quot;</div>
+<div class="line">    },</div>
+<div class="line">    3: {</div>
+<div class="line">        &quot;B&quot;: &quot;10.0.2.252&quot;,</div>
+<div class="line">        &quot;C&quot;: None</div>
+<div class="line">    }</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line">inst = Dispatcher()</div>
+<div class="line">inst.execute(subnetworks, routers, links)</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md12"></a>
+Hidden choices, and output formatting</h2>
+<h3><a class="anchor" id="autotoc_md13"></a>
+Hidden choices and impact on paths</h3>
+<p>This title may be a bit weird, but it will become clear in a second. The program, when it encounters several possible ways to get from a subnetwork to another, will have to make a choice. Therefore, the path followed by the program, which will be of course visible on the routing tables at the end might disturb you. So, in order to clear doubts and help the users find the path faster, I included a "hops" section in the output.</p>
+<p>It looks like this: </p><div class="fragment"><div class="line">----- HOPS -----</div>
+<div class="line">From subnetwork A to subnetwork B: router 2</div>
+<div class="line">From subnetwork A to subnetwork C: router 2 &gt; router 1</div>
+<div class="line">From subnetwork A to subnetwork D: router 2 &gt; router 1 &gt; router 3</div>
+<div class="line">From subnetwork B to subnetwork A: router 2</div>
+<div class="line"> </div>
+<div class="line">...</div>
+<div class="line">(I only show a small amount here, even though in reality there are more lines)</div>
+</div><!-- fragment --><p>It will help you see which path has been taken.</p>
+<h3><a class="anchor" id="autotoc_md14"></a>
+Output formatting</h3>
+<p>The output of the routing tables is not a table, as you might expect. For now, at least. It currently looks like this:</p>
+<div class="fragment"><div class="line">----- ROUTING TABLES -----</div>
+<div class="line">Router MyRouter</div>
+<div class="line">  - 192.168.0.0/24      : 192.168.0.254 via 192.168.0.254</div>
+<div class="line">  - 192.168.1.0/24      : 192.168.1.254 via 192.168.1.254</div>
+<div class="line">  - 0.0.0.0/0           : 192.168.1.253 via 192.168.1.254</div>
+<div class="line">  - 10.0.0.0/24         : 192.168.0.253 via 192.168.0.254</div>
+<div class="line">  - 10.0.1.0/24         : 192.168.1.253 via 192.168.1.254</div>
+</div><!-- fragment --><p>As you may have guessed, it is formatted as <code>DESTINATION NETWORK : GATEWAY via INTERFACE</code>. The master router route (so the way out of the local network) is always <code>0.0.0.0/0</code> in the output. </p>
+</div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

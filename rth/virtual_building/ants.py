@@ -183,10 +183,8 @@ class SweepAnt(Ant):
 
         Args:
             next_: The UID of the next hop
-
-        Returns:
-
         """
+
         hop_type = self.next_hop_type()
 
         return next_ not in self._history[f"{hop_type}s"]

@@ -63,6 +63,14 @@ class OverlappingError(Exception):
         Args:
             new: The new subnetwork range
             existing: The existing subnetwork range
+
+        Examples:
+            >>> small = {"start": "192.168.1.0", "end": "192.168.1.255"}
+            >>> big = {"start": "192.168.0.0", "end": "192.168.255.255"}
+            >>> raise OverlappingError(small, big)
+            Traceback (most recent call last):
+              ...
+            rth.core.errors.OverlappingError: Range 192.168.1.0 - 192.168.1.255 is overlapping range 192.168.0.0 - 192.168.255.255
         """
 
         self.new_range = f"{new['start']} - {new['end']}"
@@ -101,6 +109,17 @@ class IPAlreadyAttributed(Exception):
             ip: The concerned IP.
             attributed: The name of the router that possesses this IP.
             tried_to_attribute: The name of the router which tried to get this IP.
+
+        Examples:
+            >>> subnet_name = "MySubnet"
+            >>> ip = "192.168.1.250"
+            >>> attributed = "FirstRouter"
+            >>> tried_to_attribute = "ThisOtherRouter"
+            >>> raise IPAlreadyAttributed(subnet_name, ip, attributed, tried_to_attribute)
+            raise IPAlreadyAttributed("MySubnet", "192.168.1.250", "FirstRouter", "ThisOtherRouter")
+            Traceback (most recent call last):
+              ...
+            rth.core.errors.IPAlreadyAttributed: The IP 192.168.1.250 on the subnetwork 'MySubnet' is already attributed to router 'FirstRouter'; Tried to give it to router 'ThisOtherRouter'
         """
 
         self.name = subnet_name
@@ -126,6 +145,12 @@ class NameAlreadyExists(NameError):
 
         Args:
             name: The name that already exists.
+
+        Examples:
+            >>> raise NameAlreadyExists("This name")
+            Traceback (most recent call last):
+              ...
+            rth.core.errors.NameAlreadyExists: Name 'This name' already exists
         """
 
         self.name = name
@@ -149,6 +174,12 @@ class UnreachableNetwork(Exception):
             name: The name of the unreachable subnetwork.
             cidr: Its CIDR.
             total: The total number of unreachable subnetworks.
+
+        Examples:
+            >>> raise UnreachableNetwork("My subnet", "192.168.1.0/24", 4)
+            Traceback (most recent call last):
+                ...
+            rth.core.errors.UnreachableNetwork: The subnetwork 'My subnet' (CIDR 192.168.1.0/24) is unreachable from master router. Total number of unreachable subnetworks: 4
         """
 
         self.name = name
@@ -174,6 +205,16 @@ class MasterRouterError(Exception):
 
         Args:
             no_internet: Whether it concerns the network having no internet or more than one master router.
+
+        Examples:
+            >>> raise MasterRouterError(True)
+            Traceback (most recent call last):
+              ...
+            rth.core.errors.MasterRouterError: There is no connection to the internet on this network. Please connect one router.
+            >>> raise MasterRouterError(False)
+            Traceback (most recent call last):
+              ...
+            rth.core.errors.MasterRouterError: An exception occured during master router definition. Please verify ONE (and only one) router is connected to internet
         """
 
         if no_internet:

@@ -1,4 +1,4 @@
-# Routing Tables Helper - README
+# Routing Tables Helper
 
 A program made by a lover of new technologies, for all networking developers, sysadmins and other people that might find any
 use to it.
@@ -10,11 +10,11 @@ No, the program is only in its first stable release. I'm always hoping to create
 updated for a moment, but it doesn't mean I let it down either.
 
 ### Contact info
-By mail: biothewolff [at] gmx [dot] fr\
-On Discord: BioTheWolff#7708\
-You can also find me on these two french Discord servers:
-- [Developpeur(euse)s FR](https://discord.gg/8d4ACG5)
-- [l4p1n-srv](https://discord.gg/awbUQe4)
+- By mail: biothewolff [at] gmx [dot] fr
+- On Discord: BioTheWolff#7708
+- You can also find me on these two french Discord servers:
+    - [Developpeur(euse)s FR](https://discord.gg/8d4ACG5)
+    - [l4p1n-srv](https://discord.gg/awbUQe4)
 
 ## What is it?
 
