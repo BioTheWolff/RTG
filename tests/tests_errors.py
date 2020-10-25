@@ -42,7 +42,7 @@ class NetworkCreatorTests(unittest.TestCase):
     def test_paramerr_no_delay(self):
         e = NoDelayAllowed()
         self.assertEqual("No delay allowed when equitemporality is set to True. "
-                         "Pass equitemporality=False when instancing NetworkCreator", e.__str__())
+                         "Pass equitemporality=False when instancing the Dispatcher class", e.__str__())
 
     #
     # Process errors
@@ -59,7 +59,7 @@ class NetworkCreatorTests(unittest.TestCase):
     def test_procerr_unreachable_network(self):
         e = UnreachableNetwork("Random name again", "192.168.1.0/24", 3)
         self.assertEqual("The subnetwork 'Random name again' (CIDR 192.168.1.0/24) is unreachable from master router. "
-                         "Total unreachable: 3", e.__str__())
+                         "Total number of unreachable subnetworks: 3", e.__str__())
 
 
 if __name__ == '__main__':

@@ -13,3 +13,6 @@ stock
 dist
 build
 rth.egg-info
+
+# version file
+rth/version.py

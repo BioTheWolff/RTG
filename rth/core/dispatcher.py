@@ -4,14 +4,25 @@ from rth.virtual_building.routing_tables_generator import RoutingTablesGenerator
 from .errors import WronglyFormedSubnetworksData, WronglyFormedRoutersData, WronglyFormedLinksData
 from nettools.utils.ip_class import FourBytesLiteral
 
+## @package dispatcher
+#
+#  Package of the Dispatcher class.
+#  This class aims to simplify the process to the user by regrouping all the functions in one class, executable in
+#  one and only simple way.
+
 
 class Dispatcher:
     """
-    This is the dispatcher class. Which everything comes from and where everything goes.
-    We could call that a hub, I call that a good way to handle a complex program.
+    Hub that simplifies the process
+
+    Serves as a hub which allows to ease the process to the user by regrouping all the classes and functions into one
+    process runnable by providing the right data to a function.
     """
 
+    ## The virtual network (NetworkCreator) instance
     __virtual_network_instance = None
+
+    ## Whether the program has been entirely executed and processed (used for display and output functions)
     __executed = None
 
     subnetworks, routers, links = None, None, None
@@ -19,43 +30,69 @@ class Dispatcher:
 
     gend_subnetworks, gend_routers, gend_routers_names = None, None, None
     hops = None
+
+    ## The raw routing tables returned by the RoutingTablesGenerator instance
     routing_tables = None
+    ## The formatted routing tables, prepared for either display or output (with i.e. names instead of IDs)
     formatted_raw_routing_tables = None
 
-    #
-    # DUNDERS
-    #
     def __init__(self, debug=False):
+        """
+        The init function
+
+        Args:
+            debug: Triggers the whole debug system if set to True
+        """
+
         self.__virtual_network_instance = NetworkCreator()
         self.debug = debug
         self.__executed = False
 
-    #
-    # Class execution flow
-    #
     def execute(self, subnetworks, routers, links, equitemporality=True):
+        """
+        Function that triggers everything
+
+        Args:
+            subnetworks: The subnetworks data
+            routers: The routers data
+            links: The links data
+            equitemporality: Whether to switch equitemporality on or off (for now, is always to True)
+
+        """
+
         self.subnetworks = subnetworks
         self.routers = routers
         self.links = links
 
-        self.equitemporality = equitemporality
+        self.equitemporality = True  # TODO: Do not forget to replace with equitemporality param
         self.__flow()
         self.__executed = True
 
     def __flow(self):
+        """
+        Flow function
+
+        This function is used to trigger the required functions in the right order.
+        It is detached from the execute function for more readability
+        """
+
         self.__checks()
         self.__build_virtual_network()
         self.__discover_hops()
         self.__calculate_routing_tables()
 
-    #
-    # Perform all checks about data passed here
-    #
     def __checks(self):
+        """
+        Checks if data are all formatted as required.
+
+        Checks all the provided data (subnetworks, routers and links) to see if they are formatted as required.
+        """
+
         # Subnetworks checks
         s = self.subnetworks
         if not isinstance(s, dict):
             raise WronglyFormedSubnetworksData()
+
         for name in s:
             v = s[name]
             try:
@@ -81,10 +118,12 @@ class Dispatcher:
                 if not isinstance(li[rid][subnet], str) and li[rid][subnet] is not None:
                     raise WronglyFormedLinksData()
 
-    #
-    # Network Creator
-    #
     def __build_virtual_network(self):
+        """
+        NetworkCreator related
+
+        Creates the virtual network from scratch with provided data and prepares it for the next function
+        """
 
         inst = self.__virtual_network_instance
 
@@ -109,12 +148,19 @@ class Dispatcher:
         self.gend_routers_names = inst.routers_names
 
     def network_raw_output(self):
+        """
+        Outputs the raw network
+        """
+
         return self.__virtual_network_instance.network_raw_output() if self.__executed else None
 
-    #
-    # Ants Discovery
-    #
     def __discover_hops(self):
+        """
+        AntsDiscovery related
+
+        Takes the prepared virtual network and runs the Ants process to create virtual links between the subnetworks
+        and routers.
+        """
 
         ants_inst = AntsDiscovery(self.gend_subnetworks, self.gend_routers, self.equitemporality, debug=self.debug)
 
@@ -124,19 +170,11 @@ class Dispatcher:
         self.links = ants_inst.links
         self.hops = ants_inst.hops
 
-    #
-    # Routing Tables Generator
-    #
     def __calculate_routing_tables(self):
         """
-        This is the main function.
-            It will pass the low-level processing (discovering the links that are virtually created by the program)
-        to the virtual_building category.
-            Its objective is also to handle the different parameters in order to pass certain unit tests.
+        RoutingTablesGenerator related
 
-        :return: returns final result if raw is True, else displays it.
-            In further versions, the raw option should disappear to leave room for more useful things.
-            The results, sent to another process, won't need to be displayed anymore, so raw will be implied.
+        Generates the routing tables based on the paths ("hops") found by the Ants process.
         """
 
         if not self.links or self.hops:
@@ -167,6 +205,12 @@ class Dispatcher:
         self.formatted_raw_routing_tables = final
 
     def display_routing_tables(self):
+        """
+        Displays in the console
+
+        Displays the formatted paths and routing tables in the console. Useful for interactive consoles.
+        """
+
         if self.__executed:
             # Hops
             print("----- HOPS -----")
@@ -196,6 +240,15 @@ class Dispatcher:
                           f"via {self.formatted_raw_routing_tables[name][subnet]['interface']}")
 
     def output_routing_tables(self, file_path):
+        """
+        Outputs to a file
+
+        Outputs the formatted paths and routing tables to a given file path.
+
+        Args:
+            file_path: The file path where all the data will be outputted. Preferably a .txt file.
+        """
+
         if self.__executed:
             with open(file_path, encoding="utf-8", mode="w") as f:
                 # Hops
