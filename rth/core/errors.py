@@ -225,3 +225,41 @@ class MasterRouterError(Exception):
 
     def __str__(self):
         return self.text
+
+
+class WrongFileFormat(Exception):
+
+    def __init__(self, ext):
+        self.ext = ext
+
+    def __str__(self):
+        return f"Allowed formats: YAML (.yml), JSON (.json). Found: .{self.ext}"
+
+
+class WrongJSONTag(Exception):
+
+    def __init__(self, tag):
+        self.tag = tag
+
+    def __str__(self):
+        return f"Unknown YAML tag: {self.tag}"
+
+
+class MissingJSONTag(Exception):
+
+    def __init__(self, tag):
+        self.tag = tag
+
+    def __str__(self):
+        return f"Missing YAML tag: {self.tag}"
+
+
+class MissingJSONInfo(Exception):
+
+    def __init__(self, cat, name, info):
+        self.category = cat
+        self.name = name
+        self.info = info
+
+    def __str__(self):
+        return f"{self.category}: missing {self.info} in {self.category.lower()} {self.name}"
