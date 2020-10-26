@@ -103,6 +103,12 @@ class RoutingTablesGenerator:
                 break
         return ip_, sub
 
+    def pick_subnet_between_two_routers(self, first, second):
+        hops = [h for h in self.hops if h[0] == first and h[1] == second]
+        singleton_paths = [self.hops[p] for p in hops if len(self.hops[p]) == 1]
+
+        return singleton_paths[0][0]  # Return the first one because we didnt define the preferences yet
+
     def get_routing_table(self, router_id):
         """
         Get the routing table of corresponding router
@@ -133,30 +139,48 @@ class RoutingTablesGenerator:
         # the subnetwork(s) attached to the master router
         master_attached = list(self.links['routers'][self.master_router])
 
-        # the subnetwork that leads to the master router
-        to_master_uid = self.build_paths_from_possibilites([self.master_router, router_id],
-                                                           master_attached, subnets_attached)
-
-        # if both routers are on the same subnetwork
-        if to_master_uid in master_attached:
+        # if the master and this router share a subnetwork
+        if any(i in master_attached for i in subnets_attached):
             # Then we get the master router IP and just put this as the gateway
             # Interface remains this router's IP
-            inst_ = self.subnets[to_master_uid]['instance']
+            subnet = master_attached[0]
+            inst_ = self.subnets[subnet]['instance']
             routing_table['0.0.0.0/0'] = {
                 "gateway": self.router_ip(inst_, self.master_router),
                 "interface": self.router_ip(inst_, router_id)
             }
         else:
-            # now retrieving the IP of this router that points to the subnetwork leading to the master router
-            to_master_gateway, to_master_uid = self.try_router_connected_to_subnet(subnets_attached, to_master_uid)
+            # now retrieving the possible tuples between the subnetworks
+            possible_hops = [h for h in self.hops if (h[0] in subnets_attached) and (h[1] in master_attached)]
 
-            if not to_master_gateway:
-                raise Exception("To-master router should have been found in at least one of the subnetworks")
+            if not possible_hops:
+                raise Exception(f"Could not find any hop that connect the master router to router id {router_id} "
+                                f"'{self.ncinst.uid_to_name('router', router_id)})")
 
-            to_master_interface = self.ncinst.get_ip_of_router_on_subnetwork(to_master_uid, router_id)
+            # REMINDER:
+            # Tuples are (x, y) with x and y being two subnetworks IDs
+            # Hops are lists like [a, b, c, ...] with a, b, c, etc. being ROUTERS IDs
 
+            # The hops from the selected tuples above
+            possible_paths = [self.hops[p] for p in possible_hops]
+            choices = dict(zip(possible_hops, possible_paths))
+            # The tuple for which the number of hops is the lowest
+            shorter = possible_hops[smaller_of_list(possible_paths, True)]
+
+            # The starting subnetwork ID (so start of the tuple)
+            starting_sid = shorter[0]
+            # The first element of the hops list (so first router to hop onto next)
+            guiding_router_id = choices[shorter][0]
+
+            # The interface used (this router on the starting subnetwork)
+            to_master_interface = self.ncinst.get_ip_of_router_on_subnetwork(starting_sid, router_id)
             if to_master_interface is None:
                 raise Exception(f"Interface to master of router {router_id} should not be None")
+
+            # Now we establish the gateway (ip of next router on the starting subnetwork)
+            to_master_gateway = self.ncinst.get_ip_of_router_on_subnetwork(starting_sid, guiding_router_id)
+            if to_master_gateway is None:
+                raise Exception(f"Gateway to master of router {router_id} should not be None")
 
             routing_table['0.0.0.0/0'] = {
                 "gateway": to_master_gateway,

@@ -1,5 +1,6 @@
 from rth.core.errors import MasterRouterError
 
+
 def get_master_router(routers):
     """
         Get master route from all the routers
@@ -24,10 +25,10 @@ def get_master_router(routers):
         return masters[0]
 
 
-def smaller_of_list(given):
+def smaller_of_list(given, return_index=False):
     if len(given) == 1:
         # only one path found
-        return given[0]
+        return 0 if return_index else given[0]
     else:
         # we will loop to find the smaller list
         id_, length = None, None
@@ -39,4 +40,4 @@ def smaller_of_list(given):
                 if len(given[j]) < length:
                     length = len(given[j])
                     id_ = j
-        return given[id_]
+        return id_ if return_index else given[id_]
