@@ -7,6 +7,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="the file path which will be decoded")
     parser.add_argument("-O", "--output", help="outputs the results in a txt file")
+    parser.add_argument("-I", "--ignore", help="Ignore errors due to unrecognised option name", action="store_true")
 
     args = parser.parse_args()
 
@@ -15,13 +16,12 @@ def main():
     if ext not in ['json']:
         raise WrongFileFormat(ext)
 
-    adapter = JSONAdapter(args.input)
-    dispatch = adapter()
+    adapter = JSONAdapter(args.input, args.ignore)()
 
     if args.output:
-        dispatch.output_routing_tables(args.output)
+        adapter.output_routing_tables(args.output)
     else:
-        dispatch.display_routing_tables()
+        adapter.display_routing_tables()
 
 
 if __name__ == '__main__':
