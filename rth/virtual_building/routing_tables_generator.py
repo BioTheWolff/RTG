@@ -121,36 +121,47 @@ class RoutingTablesGenerator:
         # starting off by listing attached subnets and getting their ip for this router
         for subnet in subnets_attached:
             inst_ = self.subnets[subnet]['instance']
+            ip = self.router_ip(inst_, router_id)
             routing_table[inst_.cidr] = {
-                'gateway': self.router_ip(inst_, router_id),
-                'interface': self.router_ip(inst_, router_id)
+                'gateway': ip,
+                'interface': ip
             }
             subnets_done.append(subnet)
 
         # getting master route
 
-        # the subnetwork attached to the master router
-        master_attached = self.links['routers'][self.master_router]
+        # the subnetwork(s) attached to the master router
+        master_attached = list(self.links['routers'][self.master_router])
 
         # the subnetwork that leads to the master router
         to_master_uid = self.build_paths_from_possibilites([self.master_router, router_id],
                                                            master_attached, subnets_attached)
 
-        # now retrieving the IP of this router that points to the subnetwork leading to the master router
-        to_master_gateway, to_master_uid = self.try_router_connected_to_subnet(subnets_attached, to_master_uid)
+        # if both routers are on the same subnetwork
+        if to_master_uid in master_attached:
+            # Then we get the master router IP and just put this as the gateway
+            # Interface remains this router's IP
+            inst_ = self.subnets[to_master_uid]['instance']
+            routing_table['0.0.0.0/0'] = {
+                "gateway": self.router_ip(inst_, self.master_router),
+                "interface": self.router_ip(inst_, router_id)
+            }
+        else:
+            # now retrieving the IP of this router that points to the subnetwork leading to the master router
+            to_master_gateway, to_master_uid = self.try_router_connected_to_subnet(subnets_attached, to_master_uid)
 
-        if not to_master_gateway:
-            raise Exception("To-master router should have been found in at least one of the subnetworks")
+            if not to_master_gateway:
+                raise Exception("To-master router should have been found in at least one of the subnetworks")
 
-        to_master_interface = self.ncinst.get_ip_of_router_on_subnetwork(to_master_uid, router_id)
+            to_master_interface = self.ncinst.get_ip_of_router_on_subnetwork(to_master_uid, router_id)
 
-        if to_master_interface is None:
-            raise Exception(f"Interface to master of router {router_id} should not be None")
+            if to_master_interface is None:
+                raise Exception(f"Interface to master of router {router_id} should not be None")
 
-        routing_table['0.0.0.0/0'] = {
-            "gateway": to_master_gateway,
-            "interface": to_master_interface
-        }
+            routing_table['0.0.0.0/0'] = {
+                "gateway": to_master_gateway,
+                "interface": to_master_interface
+            }
 
         # now we get each non-registered-yet subnet left
         subnets_left = [i for i in self.subnets
