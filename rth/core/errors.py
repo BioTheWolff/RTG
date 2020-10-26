@@ -227,6 +227,26 @@ class MasterRouterError(Exception):
         return self.text
 
 
+class WrongOptionName(Exception):
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return f"Option '{self.name}' not recognised."
+
+
+class WrongOptionValueType(Exception):
+
+    def __init__(self, name, provided, expected):
+        self.option = name
+        self.p = provided
+        self.e = expected
+
+    def __repr__(self):
+        return f"Value for option '{self.option}' must be of type {str(self.p)} (provided {str(self.e)}."
+
+
 class WrongFileFormat(Exception):
 
     def __init__(self, ext):

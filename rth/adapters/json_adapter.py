@@ -1,21 +1,19 @@
 import json
 from rth.core.errors import MissingJSONTag, WrongJSONTag, MissingJSONInfo
-from rth.core.dispatcher import Dispatcher
-from rth.virtual_building.network_creator import NetworkCreator
+from .general_adapter import GeneralAdapter
 
 
-class JSONAdapter:
-    def __init__(self, file_path):
-        self.file_path = file_path
-
-    def __call__(self, *args, **kwargs):
-        return self.evaluate()
+class JSONAdapter(GeneralAdapter):
 
     def evaluate(self):
         with open(self.file_path, 'r') as file:
             decoded = json.load(file)
 
         found_networks, found_routers, found_links, links_or_connections = False, False, False, 'Links'
+
+        # Capitalise the keys
+        decoded = {key.capitalize(): decoded[key] for key in decoded}
+
         for part in decoded:
             if part == 'Networks':
                 found_networks = True
@@ -33,9 +31,6 @@ class JSONAdapter:
             raise MissingJSONTag('Networks')
         if not found_links:
             raise MissingJSONTag('Links')
-
-        # we init the instance
-        inst = NetworkCreator()
 
         # we create the dictionary of all subnetworks
         subnetworks = {}
@@ -66,8 +61,4 @@ class JSONAdapter:
         # finally, we link all things between them
         list_ = decoded['Links'] if links_or_connections == 'Links' else decoded['Connections']
 
-        # Now we pass the instance onto the dispatcher
-        dispatch = Dispatcher()
-        dispatch.execute(subnetworks=subnetworks, routers=routers, links=list_)
-
-        return dispatch
+        return self._process(subnetworks, routers, list_)

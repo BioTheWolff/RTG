@@ -1,7 +1,8 @@
 from rth.virtual_building.network_creator import NetworkCreator
 from rth.virtual_building.ants import AntsDiscovery
 from rth.virtual_building.routing_tables_generator import RoutingTablesGenerator
-from .errors import WronglyFormedSubnetworksData, WronglyFormedRoutersData, WronglyFormedLinksData
+from .errors import WronglyFormedSubnetworksData, WronglyFormedRoutersData, WronglyFormedLinksData, WrongOptionName, \
+    WrongOptionValueType
 from nettools.utils.ip_class import FourBytesLiteral
 
 ## @package dispatcher
@@ -22,6 +23,11 @@ class Dispatcher:
     ## The virtual network (NetworkCreator) instance
     __virtual_network_instance = None
 
+    __possible_options = {
+        'preferred_routers': list
+    }
+    __options = None
+
     ## Whether the program has been entirely executed and processed (used for display and output functions)
     __executed = None
 
@@ -36,6 +42,19 @@ class Dispatcher:
     ## The formatted routing tables, prepared for either display or output (with i.e. names instead of IDs)
     formatted_raw_routing_tables = None
 
+    @property
+    def available_options(self):
+        return list(self.__possible_options.keys())
+
+    def set_option(self, option, value):
+        if option not in self.available_options:
+            raise WrongOptionName(option)
+
+        if not isinstance(value, type(self.__possible_options[option])):
+            raise WrongOptionValueType(option, type(value), type(self.__possible_options[option]))
+
+        self.__options[option] = value
+
     def __init__(self, debug=False):
         """
         The init function
@@ -47,8 +66,9 @@ class Dispatcher:
         self.__virtual_network_instance = NetworkCreator()
         self.debug = debug
         self.__executed = False
+        self.__options = {key: None for key in self.available_options}
 
-    def execute(self, subnetworks, routers, links, equitemporality=True):
+    def execute(self, subnetworks, routers, links):
         """
         Function that triggers everything
 
@@ -56,7 +76,6 @@ class Dispatcher:
             subnetworks: The subnetworks data
             routers: The routers data
             links: The links data
-            equitemporality: Whether to switch equitemporality on or off (for now, is always to True)
 
         """
 
@@ -64,7 +83,7 @@ class Dispatcher:
         self.routers = routers
         self.links = links
 
-        self.equitemporality = True  # TODO: Do not forget to replace with equitemporality param
+        self.equitemporality = True
         self.__flow()
         self.__executed = True
 
@@ -98,7 +117,7 @@ class Dispatcher:
             try:
                 ip, _ = v.split("/")
                 FourBytesLiteral().set_from_string_literal(ip)
-            except:
+            except (OverflowError, Exception):
                 raise WronglyFormedSubnetworksData()
 
         r = self.routers
