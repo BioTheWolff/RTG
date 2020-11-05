@@ -8,6 +8,7 @@ htmlcov/
 
 # files to be reworked, to be added later or removed for a moment
 stock
+*.out
 
 # build
 dist

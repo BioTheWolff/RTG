@@ -4,6 +4,7 @@ from nettools.utils.utils import Utils
 from nettools.utils.errors import IPOffNetworkRangeException
 
 from rth.core.errors import *
+from rth.virtual_building.utils import exists_and_matches
 
 ## @package network_creator
 #
@@ -28,18 +29,17 @@ class NetworkCreator:
 
     ## Subnetworks ranges ( format is [{"start": START, "end": END}, ...] )
     ranges = None
-    equitemporality = None
+    options = None
 
-    def __init__(self, equitemporality=True):
+    def __init__(self, options=None):
         """
         Init
 
         Args:
-            equitemporality: equitemporality Whether to activate equitemporality or not. Forced to True
-            for now because equitemporality is not yet implemented.
+            options: the options
         """
 
-        self.equitemporality = True
+        self.options = options
 
         self.subnetworks, self.routers = {}, {}
         self.subnets_names, self.routers_names = [], []
@@ -124,10 +124,11 @@ class NetworkCreator:
             self.uid = uid
             self.name = name if name else None
             self.internet = internet
-            if not NetworkCreator.equitemporality and delay:
-                raise NoDelayAllowed()
-            else:
-                self.delay = delay
+            if delay:
+                if exists_and_matches(NetworkCreator.options, 'equitemporality', False):
+                    self.delay = delay
+                else:
+                    raise NoDelayAllowed()
             self.connected_networks = {}
 
         def connect(self, subnet_uid, router_ip):

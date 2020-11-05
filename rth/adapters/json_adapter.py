@@ -1,5 +1,5 @@
 import json
-from rth.core.errors import MissingJSONTag, WrongJSONTag, MissingJSONInfo
+from rth.core.errors import MissingFileTag, WrongFileTag, MissingFileInfo
 from .general_adapter import GeneralAdapter
 
 
@@ -22,15 +22,17 @@ class JSONAdapter(GeneralAdapter):
             elif part == 'Links' or part == 'Connections':
                 links_or_connections = 'Links' if part == 'Links' else 'Connections'
                 found_links = True
+            elif part == 'Options':
+                pass
             else:
-                raise WrongJSONTag(part)
+                raise WrongFileTag(part, 'json')
 
         if not found_routers:
-            raise MissingJSONTag('Routers')
+            raise MissingFileTag('Routers', 'json')
         if not found_networks:
-            raise MissingJSONTag('Networks')
+            raise MissingFileTag('Networks', 'json')
         if not found_links:
-            raise MissingJSONTag('Links')
+            raise MissingFileTag('Links', 'json')
 
         # we create the dictionary of all subnetworks
         subnetworks = {}
@@ -46,7 +48,7 @@ class JSONAdapter(GeneralAdapter):
                 subnetworks[name] = f"{ip}/{mask}"
             else:
                 # missing a cidr tag or a couple IP/mask
-                raise MissingJSONInfo('Networks', str(name), "CIDR or IP/mask couple")
+                raise MissingFileInfo('Networks', str(name), "CIDR or IP/mask couple")
 
         # then we create the dictionary of all routers
         routers = {}
@@ -61,4 +63,9 @@ class JSONAdapter(GeneralAdapter):
         # finally, we link all things between them
         list_ = decoded['Links'] if links_or_connections == 'Links' else decoded['Connections']
 
-        return self._process(subnetworks, routers, list_)
+        # The options if there are any
+        options = None
+        if 'Options' in decoded:
+            options = decoded['Options']
+
+        return self._process(subnetworks, routers, list_, options=options)

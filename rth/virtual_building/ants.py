@@ -246,21 +246,21 @@ class AntsDiscovery:
     The class that runs all the process of Discovery
     """
 
-    def __init__(self, subnets, routers, equitemporality=True, debug=False):
+    def __init__(self, subnets, routers, options=None, debug=False):
         """
         Init
 
         Args:
             subnets: The subnetworks data
             routers: The routers data
-            equitemporality: The equitemporality tweaker
+            options: The options
             debug: Debug param
         """
 
         # given basics
         self.subnets = subnets
         self.routers = routers
-        self.equitemporality = True
+        self.options = options
         # made-up basics
         self.hops = {}
         self.links, self.subnets_table = self.prepare_matrix_and_links()
@@ -328,6 +328,10 @@ class AntsDiscovery:
             The visited subnetworks and routers, and the paths leading to the objective
         """
 
+        def internal_debug_report(string):
+            if debug:
+                print(string)
+
         visited = {"subnets": [], "routers": []}
         routers, subnets = links['routers'], links['subnets']
         ants = []
@@ -362,16 +366,14 @@ class AntsDiscovery:
 
         visit('subnets', subnet_start)
 
-        if debug:
-            print("----- PROCESS START -----")
+        internal_debug_report(f"\n\n\n----- {'SWEEP' if discovery_type == 'sweep' else 'FIND'} START -----")
 
         # PROCESS
         while len(ants):
 
-            if debug:
-                print(f"┌────────────────────────────────────────────")
-                print(f"│ Starting new round: {len(ants)} ants alive")
-                print(f"│ Current visited state: ", visited)
+            internal_debug_report(f"┌────────────────────────────────────────────")
+            internal_debug_report(f"│ Starting new round: {len(ants)} ants alive")
+            internal_debug_report(f"│ Current visited state: {visited}")
 
             # Avoid recursion error
             if len(ants) > 100:
@@ -395,14 +397,12 @@ class AntsDiscovery:
 
                 subnets_at_pos = [s_ for s_ in routers[ant.router] if not_visited('subnets', s_)]
 
-                if debug:
-                    print(f"│  └ {id(ant)}: {subnets_at_pos}")
+                internal_debug_report(f"│  └ {id(ant)}: {subnets_at_pos}")
 
                 # 1.1: One subnet
                 if len(subnets_at_pos) == 0:
                     ant.kill()
-                    if debug:
-                        print(f"│    » DEAD | Already seen everything from this node")
+                    internal_debug_report(f"│    » DEAD | Already seen everything from this node")
                 elif len(subnets_at_pos) == 1:
                     check = ant.check_next_move(subnets_at_pos[0])
 
@@ -412,13 +412,11 @@ class AntsDiscovery:
                             # We can proceed to next subnet
                             ant.move_to(subnets_at_pos[0])
                             visit('subnets', subnets_at_pos[0])
-                            if debug:
-                                print(f"│    » ALIVE | Discovered network {subnets_at_pos[0]}")
+                            internal_debug_report(f"│    » ALIVE | Discovered network {subnets_at_pos[0]}")
                         elif check is False:
                             # we already went there
                             ant.kill()
-                            if debug:
-                                print(f"│    » DEAD | Found a dead end")
+                            internal_debug_report(f"│    » DEAD | Found a dead end")
                         else:
                             raise Exception("Unexpected to happen at anytime")
                     else:
@@ -440,8 +438,7 @@ class AntsDiscovery:
                 # 1.2: Several subnets, kills and births
                 else:
                     ant.kill()
-                    if debug:
-                        print(f"│    » DEAD | Found multiple possible paths. Giving birth to:")
+                    internal_debug_report(f"│    » DEAD | Found multiple possible paths. Giving birth to:")
 
                     for subnet_ in subnets_at_pos:
                         if not_visited('subnets', subnet_):
@@ -454,8 +451,7 @@ class AntsDiscovery:
                             new_ant.feed_history("routers", ant.get_history())
                             visit('subnets', subnet_)
 
-                            if debug:
-                                print(f"│      » {id(new_ant)} : discovered {subnet_}")
+                            internal_debug_report(f"│      » {id(new_ant)} : discovered {subnet_}")
 
                             if isinstance(new_ant, FindAnt) and new_ant.already_on_objective():
                                 ants_at_objective.append(new_ant.get_history()['routers'])
@@ -469,7 +465,8 @@ class AntsDiscovery:
                 print(f"│ Commencing hop to next router. Activated {activate_ants()} ants ({len(ants)} ants in total).")
                 print(f"│ Current subnetwork pos / history:")
                 for ant in ants:
-                    print(f"│  - {id(ant)}: {ant.subnet} / {ant.get_history()}")
+                    if ant.alive:
+                        print(f"│  - {id(ant)}: {ant.subnet} / {ant.get_history()}")
                 print(f"│ Status:")
             else:
                 activate_ants()
@@ -480,14 +477,12 @@ class AntsDiscovery:
 
                 routers_at_pos = [r for r in subnets[ant.subnet] if not_visited('routers', r)]
 
-                if debug:
-                    print(f"│  └ {id(ant)}: {routers_at_pos}")
+                internal_debug_report(f"│  └ {id(ant)}: {routers_at_pos}")
 
                 # 2.1: One router
                 if len(routers_at_pos) == 0:
                     ant.kill()
-                    if debug:
-                        print(f"│    » DEAD | Already seen everything from this node")
+                    internal_debug_report(f"│    » DEAD | Already seen everything from this node")
                 elif len(routers_at_pos) == 1:
                     check = ant.check_next_move(routers_at_pos[0])
                     if discovery_type == 'sweep':
@@ -495,12 +490,10 @@ class AntsDiscovery:
                             ant.move_to(routers_at_pos[0])
                             visit('routers', routers_at_pos[0])
 
-                            if debug:
-                                print(f"│    » ALIVE | Discovered router {routers_at_pos[0]}")
+                            internal_debug_report(f"│    » ALIVE | Discovered router {routers_at_pos[0]}")
                         elif check is False:
                             ant.kill()
-                            if debug:
-                                print(f"│    » DEAD | Found a dead end")
+                            internal_debug_report(f"│    » DEAD | Found a dead end")
                         else:
                             raise Exception("Unexpected to happen at anytime")
                     else:
@@ -516,8 +509,7 @@ class AntsDiscovery:
                 else:
                     ant.kill()
 
-                    if debug:
-                        print(f"│    » DEAD | Found multiple possible paths. Giving birth to:")
+                    internal_debug_report(f"│    » DEAD | Found multiple possible paths. Giving birth to:")
                     for router in routers_at_pos:
                         if not_visited('routers', router):
                             if discovery_type == 'sweep':
@@ -527,30 +519,25 @@ class AntsDiscovery:
                             new_ant.feed_history("subnets", ant.get_history())
 
                             visit('routers', router)
-                            if debug:
-                                print(f"│      » {id(new_ant)} : discovered {router}")
+                            internal_debug_report(f"│      » {id(new_ant)} : discovered {router}")
 
                             ants.append(new_ant)
 
             # 3. Cleaning up dead bodies
-            if debug:
-                print(f"├──────────────────────────────────────────")
-                print(f"│ Removing dead ants. Total ants: {len(ants)}")
+            internal_debug_report(f"├──────────────────────────────────────────")
+            internal_debug_report(f"│ Removing dead ants. Total ants: {len(ants)}")
 
             for i in reversed(range(len(ants))):
-                if debug:
-                    print(f"│   » {id(ants[i])}: {ants[i].state}")
+                internal_debug_report(f"│   » {id(ants[i])}: {ants[i].state}")
                 if ants[i].dead:
                     ants.remove(ants[i])
 
-            if debug:
-                print(f"│ Ants remaining : {len(ants)}")
-                print(f"└──────────────────────────────────────────")
+            internal_debug_report(f"│ Ants remaining : {len(ants)}")
+            internal_debug_report(f"└──────────────────────────────────────────")
 
         # RESULT
-        if debug:
-            print("Final state: ", visited)
-            print("----- PROCESS END -----")
+        internal_debug_report(f"Final state: {visited}")
+        internal_debug_report(f"----- {'SWEEP' if discovery_type == 'sweep' else 'FIND'} END -----\n")
 
         return visited, ants_at_objective
 
@@ -588,16 +575,56 @@ class AntsDiscovery:
 
             _, at_objective = self.ants_discovery_process('find', self.links, s, e, debug=self.debug)
 
-            if self.debug:
-                print(f"matrix {matrix}: ", at_objective)
+            self.debug_report(f"matrix {matrix}: {at_objective}")
 
-            # If equitemporality is set to False, we take all the paths to calculate later
-            if self.equitemporality:
+            # We save all the paths, tests will be done after
+            self.hops[(s, e)] = at_objective
+
+        # After all paths are calculated, we filter them with the options
+        self.filter_paths_from_hops()
+
+    def filter_paths_from_hops(self):
+        self.debug_report("----- FILTERING START -----")
+
+        p = None
+
+        if 'preferred_routers' in self.options:
+            p = self.options['preferred_routers']
+
+        for hop in self.hops:
+            v = self.hops[hop]
+            self.debug_report("┌────────────────────────────────────────────")
+            self.debug_report(f" - {hop}: value before filter is {v}")
+
+            # PREFERRED ROUTERS
+            if p and len(v) > 1:
+                # We don't test if there is only one path, it wouldn't make sense
+
+                # We take the preferences list (number of preferred routers in the path)
+                preferences = list_preferences_from_paths(v, p)
+
+                # We take the largest of the list (the more preferred routers there are, the best it is)
+                largest = list_of_largest_of_list(preferences, return_index=True)
+
+                # We stock into the final hops the hops which ids are in the "largest" list
+                # We also reassign v if any further filtering needs to be done
+                self.hops[hop] = v = [path for n, path in enumerate(v) if n in largest]
+
+                self.debug_report(f"    -> Preferred routers filter: now {self.hops[hop]}")
+
+            # EQUITEMPORALITY
+            # If equitemporality is set to True, we take the fastest (so shortest) path
+            if exists_and_matches(self.options, 'equitemporality', True):
                 # Test if there are different paths, and pick the smaller one
-                if len(at_objective) == 1:
+                if len(v) == 1:
                     # only one path found
-                    self.hops[(s, e)] = at_objective[0]
+                    self.hops[hop] = v[0]
                 else:
-                    self.hops[(s, e)] = smaller_of_list(at_objective)
-            else:
-                self.hops[(s, e)] = at_objective
+                    self.hops[hop] = smaller_of_list(v)
+                self.debug_report(f"    -> Equitemporality filter: now {self.hops[hop]}")
+
+        self.debug_report("----- FILTERING END -----\n\n\n")
+
+    def debug_report(self, string):
+        if self.debug:
+            print(string)

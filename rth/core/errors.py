@@ -249,32 +249,36 @@ class WrongOptionValueType(Exception):
 
 class WrongFileFormat(Exception):
 
-    def __init__(self, ext):
+    def __init__(self, ext, allowed: dict):
+        self.ext = ext
+        self.a = allowed
+
+    def __str__(self):
+        tab = [f"{k} (.{self.a[k]})" for k in self.a]
+        return f"Allowed formats: {''.join(tab)}. Found: .{self.ext}"
+
+
+class WrongFileTag(Exception):
+
+    def __init__(self, tag, ext):
+        self.tag = tag
         self.ext = ext
 
     def __str__(self):
-        return f"Allowed formats: YAML (.yml), JSON (.json). Found: .{self.ext}"
+        return f"Unknown {self.ext.upper()} tag: {self.tag}"
 
 
-class WrongJSONTag(Exception):
+class MissingFileTag(Exception):
 
-    def __init__(self, tag):
+    def __init__(self, tag, ext):
         self.tag = tag
+        self.ext = ext
 
     def __str__(self):
-        return f"Unknown YAML tag: {self.tag}"
+        return f"Missing {self.ext.upper()} tag: {self.tag}"
 
 
-class MissingJSONTag(Exception):
-
-    def __init__(self, tag):
-        self.tag = tag
-
-    def __str__(self):
-        return f"Missing YAML tag: {self.tag}"
-
-
-class MissingJSONInfo(Exception):
+class MissingFileInfo(Exception):
 
     def __init__(self, cat, name, info):
         self.category = cat

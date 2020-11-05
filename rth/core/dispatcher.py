@@ -21,18 +21,17 @@ class Dispatcher:
     """
 
     ## The virtual network (NetworkCreator) instance
-    __virtual_network_instance = None
+    __virtual_network_instance: NetworkCreator = None
 
     __possible_options = {
-        'preferred_routers': list
+        'preferred_routers': []
     }
-    __options = None
+    __options: dict = None
 
     ## Whether the program has been entirely executed and processed (used for display and output functions)
-    __executed = None
+    __executed: bool = None
 
     subnetworks, routers, links = None, None, None
-    equitemporality = None
 
     gend_subnetworks, gend_routers, gend_routers_names = None, None, None
     hops = None
@@ -62,11 +61,12 @@ class Dispatcher:
         Args:
             debug: Triggers the whole debug system if set to True
         """
-
-        self.__virtual_network_instance = NetworkCreator()
         self.debug = debug
         self.__executed = False
         self.__options = {key: None for key in self.available_options}
+
+        # Hard-coded options for now
+        self.__options['equitemporality'] = True
 
     def execute(self, subnetworks, routers, links):
         """
@@ -83,7 +83,6 @@ class Dispatcher:
         self.routers = routers
         self.links = links
 
-        self.equitemporality = True
         self.__flow()
         self.__executed = True
 
@@ -96,8 +95,11 @@ class Dispatcher:
         """
 
         self.__checks()
+        self.__resolve_options(1)
         self.__build_virtual_network()
+        self.__resolve_options(2)
         self.__discover_hops()
+        self.__resolve_options(3)
         self.__calculate_routing_tables()
 
     def __checks(self):
@@ -144,7 +146,7 @@ class Dispatcher:
         Creates the virtual network from scratch with provided data and prepares it for the next function
         """
 
-        inst = self.__virtual_network_instance
+        self.__virtual_network_instance = inst = NetworkCreator(self.__options)
 
         # Create subnets
         for name in self.subnetworks:
@@ -181,7 +183,7 @@ class Dispatcher:
         and routers.
         """
 
-        ants_inst = AntsDiscovery(self.gend_subnetworks, self.gend_routers, self.equitemporality, debug=self.debug)
+        ants_inst = AntsDiscovery(self.gend_subnetworks, self.gend_routers, self.__options, debug=self.debug)
 
         ants_inst.sweep_network()
         ants_inst.calculate_hops()
@@ -196,11 +198,11 @@ class Dispatcher:
         Generates the routing tables based on the paths ("hops") found by the Ants process.
         """
 
-        if not self.links or self.hops:
+        if not self.links or not self.hops:
             self.__discover_hops()
 
         rtg_inst = RoutingTablesGenerator(self.__virtual_network_instance, self.gend_subnetworks, self.gend_routers,
-                                          self.links, self.hops, equitemporality=self.equitemporality)
+                                          self.links, self.hops)
 
         # getting routing tables
         routing_tables = []
@@ -296,3 +298,19 @@ class Dispatcher:
                         f.write(f"  - {subnet} {''.join([' ' for _ in range(18 - len(subnet))])} : "
                                 f"{self.formatted_raw_routing_tables[name][subnet]['gateway']} "
                                 f"via {self.formatted_raw_routing_tables[name][subnet]['interface']}\n")
+
+    def __resolve_options(self, phase):
+        # Resolves before the NC instance
+        if phase == 1:
+            pass
+        # Resolves after NC and before Ants
+        elif phase == 2:
+            if 'preferred_routers' in self.__options:
+                # Convert from names to UIDs because we will need IDs for paths comparisons for the Ants
+                self.__options['preferred_routers'] = [
+                    self.__virtual_network_instance.name_to_uid('router', n)
+                    for n in self.__options['preferred_routers']
+                ]
+        # Resolves after Ants and before RTG
+        elif phase == 3:
+            pass

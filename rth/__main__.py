@@ -13,10 +13,12 @@ def main():
 
     ext = args.input.split('.')[-1]
 
-    if ext not in ['json']:
-        raise WrongFileFormat(ext)
+    allowed_extensions = {'JSON': 'json'}
 
-    adapter = JSONAdapter(args.input, args.ignore)()
+    if ext not in list(allowed_extensions.values()):
+        raise WrongFileFormat(ext, allowed_extensions)
+
+    adapter = JSONAdapter(args.input, args.ignore, debug=True)()
 
     if args.output:
         adapter.output_routing_tables(args.output)
