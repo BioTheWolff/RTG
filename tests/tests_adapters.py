@@ -6,14 +6,20 @@ from json import loads
 
 
 def get_format_test_files(lang):
-    tests = "./files/"
+    tests = "files/"
     langtests = [f for f in listdir(tests) if isfile(join(tests, f)) and f.endswith(f".{lang}")]
     final = {}
 
     for t in langtests:
         filename = "".join(t.split(".")[0:-1])
-        if not exists(join(tests, f"{filename}.jsonresult")):
-            raise Exception(f"Test file {t} has no result file.")
+        try:
+            # PyCharm path
+            if not exists(join(tests, f"{filename}.jsonresult")):
+                raise Exception(f"Test file {t} has no result file.")
+        except FileNotFoundError:
+            # Normal python path
+            if not exists(join(f"tests/{tests}", f"{filename}.jsonresult")):
+                raise Exception(f"Test file {t} has no result file.")
 
         final[t] = f"{filename}.jsonresult"
 

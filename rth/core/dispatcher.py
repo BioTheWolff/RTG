@@ -1,9 +1,11 @@
+from nettools.utils.ip_class import FourBytesLiteral
+
 from rth.virtual_building.network_creator import NetworkCreator
 from rth.virtual_building.ants import AntsDiscovery
 from rth.virtual_building.routing_tables_generator import RoutingTablesGenerator
 from .errors import WronglyFormedSubnetworksData, WronglyFormedRoutersData, WronglyFormedLinksData, WrongOptionName, \
     WrongOptionValueType
-from nettools.utils.ip_class import FourBytesLiteral
+from rth.virtual_building.utils import exists_and_not_none
 
 ## @package dispatcher
 #
@@ -305,7 +307,7 @@ class Dispatcher:
             pass
         # Resolves after NC and before Ants
         elif phase == 2:
-            if 'preferred_routers' in self.__options:
+            if exists_and_not_none(self.__options, 'preferred_routers'):
                 # Convert from names to UIDs because we will need IDs for paths comparisons for the Ants
                 self.__options['preferred_routers'] = [
                     self.__virtual_network_instance.name_to_uid('router', n)

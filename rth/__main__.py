@@ -8,6 +8,8 @@ def main():
     parser.add_argument("input", help="the file path which will be decoded")
     parser.add_argument("-O", "--output", help="outputs the results in a txt file")
     parser.add_argument("-I", "--ignore", help="Ignore errors due to unrecognised option name", action="store_true")
+    parser.add_argument("--debug", help="Activates debug. Do not activate if you don't know what you are doing",
+                        action="store_true")
 
     args = parser.parse_args()
 
@@ -18,7 +20,7 @@ def main():
     if ext not in list(allowed_extensions.values()):
         raise WrongFileFormat(ext, allowed_extensions)
 
-    adapter = JSONAdapter(args.input, args.ignore, debug=True)()
+    adapter = JSONAdapter(args.input, args.ignore, debug=args.debug)()
 
     if args.output:
         adapter.output_routing_tables(args.output)

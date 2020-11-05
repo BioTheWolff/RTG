@@ -8,3 +8,5 @@
   - fixed bugs concerning the master router and route (See [issue #6](https://github.com/BioTheWolff/RTH/issues/6))
   - reworked the way the master route is handled and processed in the RTG class
   - added an option for preferred routers
+  - fixed the hops not reconstructing partially discovered paths into fully correct paths (some were never considered correct).
+  Patched because could create problems when combined with the preference.

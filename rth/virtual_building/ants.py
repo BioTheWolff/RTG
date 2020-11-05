@@ -336,6 +336,7 @@ class AntsDiscovery:
         routers, subnets = links['routers'], links['subnets']
         ants = []
         ants_at_objective = []
+        partial_paths = {}
 
         def not_visited(type_, pos):
             return pos not in visited[type_]
@@ -402,6 +403,9 @@ class AntsDiscovery:
                 # 1.1: One subnet
                 if len(subnets_at_pos) == 0:
                     ant.kill()
+                    # The ant will not give birth, we save the partial path
+                    partial_paths[tuple(ant.get_history()['routers'])] = list(routers[ant.router])
+
                     internal_debug_report(f"│    » DEAD | Already seen everything from this node")
                 elif len(subnets_at_pos) == 1:
                     check = ant.check_next_move(subnets_at_pos[0])
@@ -482,6 +486,9 @@ class AntsDiscovery:
                 # 2.1: One router
                 if len(routers_at_pos) == 0:
                     ant.kill()
+                    # The ant will not give birth, we save the partial path
+                    partial_paths[tuple(ant.get_history()['routers'])] = list(routers[ant.router])
+
                     internal_debug_report(f"│    » DEAD | Already seen everything from this node")
                 elif len(routers_at_pos) == 1:
                     check = ant.check_next_move(routers_at_pos[0])
@@ -537,9 +544,57 @@ class AntsDiscovery:
 
         # RESULT
         internal_debug_report(f"Final state: {visited}")
+
+        if discovery_type != 'sweep':
+            internal_debug_report(f"Hop: ({subnet_start}, {subnet_end})")
+            internal_debug_report(f"Final paths: {ants_at_objective}")
+            internal_debug_report(f"Partial paths: {partial_paths}")
+            ants_at_objective = AntsDiscovery.rebuild_paths_from_partials(
+                (subnet_start, subnet_end), ants_at_objective, partial_paths, debug)
+
         internal_debug_report(f"----- {'SWEEP' if discovery_type == 'sweep' else 'FIND'} END -----\n")
 
         return visited, ants_at_objective
+
+    @staticmethod
+    def rebuild_paths_from_partials(hop, references: list, partial_paths, debug=False):
+        def internal_debug_report(string):
+            if debug:
+                print(string)
+
+        if not partial_paths:
+            internal_debug_report("Skipped rebuild: no partial paths.")
+            return references
+
+        internal_debug_report("----- REBUILD START -----")
+
+        final = [*references]
+
+        for ref in references:
+            internal_debug_report(f"┌────────────────────────────────────────────")
+            internal_debug_report(f"│ reference: {ref}")
+
+            for path in partial_paths:
+                at_death = partial_paths[path]
+                internal_debug_report(f"│  - partial: {path}")
+                internal_debug_report(f"│    with routers: {at_death}")
+
+                could_merge = False
+                for n, r in enumerate(ref):
+                    if r != hop[0] and r in at_death:
+                        rebuilt = [*path, *ref[n+1:]]
+                        internal_debug_report(f"│      -> merges with ref on {r} (index {n})")
+                        internal_debug_report(f"│      => now becomes ref as {rebuilt}")
+                        final.append(rebuilt)
+                        could_merge = True
+                if not could_merge:
+                    internal_debug_report(f"│      / no possible merge.")
+
+            internal_debug_report(f"└──────────────────────────────────────────")
+
+        internal_debug_report("----- REBUILD END -----")
+
+        return final
 
     def sweep_network(self):
         """
@@ -593,15 +648,18 @@ class AntsDiscovery:
 
         for hop in self.hops:
             v = self.hops[hop]
-            self.debug_report("┌────────────────────────────────────────────")
-            self.debug_report(f" - {hop}: value before filter is {v}")
+            self.debug_report(f"┌────────────────────────────────────────────")
+            self.debug_report(f"│ {hop}: value before filter is {v}")
 
             # PREFERRED ROUTERS
             if p and len(v) > 1:
+                self.debug_report(f"│  -> Preferred routers filter")
                 # We don't test if there is only one path, it wouldn't make sense
 
                 # We take the preferences list (number of preferred routers in the path)
                 preferences = list_preferences_from_paths(v, p)
+                prefd = {tuple(v[i]): preferences[i] for i in range(len(preferences))}
+                self.debug_report(f"│    / preferences: {prefd}")
 
                 # We take the largest of the list (the more preferred routers there are, the best it is)
                 largest = list_of_largest_of_list(preferences, return_index=True)
@@ -610,7 +668,7 @@ class AntsDiscovery:
                 # We also reassign v if any further filtering needs to be done
                 self.hops[hop] = v = [path for n, path in enumerate(v) if n in largest]
 
-                self.debug_report(f"    -> Preferred routers filter: now {self.hops[hop]}")
+                self.debug_report(f"│    => now {self.hops[hop]}")
 
             # EQUITEMPORALITY
             # If equitemporality is set to True, we take the fastest (so shortest) path
@@ -621,7 +679,9 @@ class AntsDiscovery:
                     self.hops[hop] = v[0]
                 else:
                     self.hops[hop] = smaller_of_list(v)
-                self.debug_report(f"    -> Equitemporality filter: now {self.hops[hop]}")
+                self.debug_report(f"│  -> Equitemporality filter: now {self.hops[hop]}")
+
+            self.debug_report(f"└──────────────────────────────────────────")
 
         self.debug_report("----- FILTERING END -----\n\n\n")
 

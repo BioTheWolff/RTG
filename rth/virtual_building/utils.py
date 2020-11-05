@@ -70,6 +70,10 @@ def exists_and_matches(dictionary, key, value=True):
     return key in dictionary and dictionary[key] == value
 
 
+def exists_and_not_none(dictionary, key):
+    return key in dictionary and dictionary[key] is not None
+
+
 def list_preferences_from_paths(paths, preferred):
     return [number_of_matching_in_list(preferred, p) for p in paths]
 
