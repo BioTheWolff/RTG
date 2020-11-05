@@ -7,7 +7,11 @@ from json import loads
 
 def get_format_test_files(lang):
     tests = "files/"
-    langtests = [f for f in listdir(tests) if isfile(join(tests, f)) and f.endswith(f".{lang}")]
+    prefix = "tests/"
+    try:
+        langtests = [f for f in listdir(tests) if isfile(join(tests, f)) and f.endswith(f".{lang}")]
+    except FileNotFoundError:
+        langtests = [f for f in listdir(prefix + tests) if isfile(join(tests, f)) and f.endswith(f".{lang}")]
     final = {}
 
     for t in langtests:
@@ -18,7 +22,7 @@ def get_format_test_files(lang):
                 raise Exception(f"Test file {t} has no result file.")
         except FileNotFoundError:
             # Normal python path
-            if not exists(join(f"tests/{tests}", f"{filename}.jsonresult")):
+            if not exists(join(prefix + tests, f"{filename}.jsonresult")):
                 raise Exception(f"Test file {t} has no result file.")
 
         final[t] = f"{filename}.jsonresult"
